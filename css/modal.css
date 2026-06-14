@@ -1,0 +1,138 @@
+/* ─── Modal overlay ─── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── Modal card ─── */
+
+.modal {
+  background: var(--color-white);
+  width: min(480px, 90vw);
+  padding: 3rem 3rem 2.5rem;
+  position: relative;
+  transform: translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-overlay.is-open .modal {
+  transform: translateY(0);
+}
+
+/* ─── Close ─── */
+
+.modal__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-black);
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
+
+.modal__close:hover {
+  opacity: 1;
+}
+
+/* ─── Content ─── */
+
+.modal__title {
+  font-family: var(--font-primary);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25em;
+}
+
+.modal__subtitle {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+/* ─── Form ─── */
+
+.modal__field {
+  margin-bottom: 1.25rem;
+}
+
+.modal__label {
+  display: block;
+  font-family: var(--font-primary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.modal__input {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--color-black);
+  padding: 0.5rem 0;
+  font-family: var(--font-primary);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 700;
+  color: var(--color-black);
+  outline: none;
+  letter-spacing: -0.01em;
+}
+
+.modal__input::placeholder {
+  color: #bbb;
+  font-weight: 400;
+}
+
+.modal__input:focus {
+  border-bottom-color: var(--color-black);
+}
+
+/* ─── Submit ─── */
+
+.modal__submit {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1em 2em;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.modal__submit:hover {
+  opacity: 0.75;
+}

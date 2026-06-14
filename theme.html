@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PenPal4ever</title>
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/theme.css" />
+</head>
+<body>
+
+  <!-- ─── NEW THEME intro overlay ─── -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__block" id="intro-block">
+      <p class="theme-label">
+        <span>THE FIRST</span><span>THEME</span><span>IS</span>
+      </p>
+      <h1 class="theme-title" id="intro-title">—</h1>
+    </div>
+  </div>
+
+  <!-- ─── CURRENT THEME layout ─── -->
+  <div class="ct-layout" id="ct-layout">
+
+    <header class="ct-header">
+      <button class="nav-btn nav-btn--prev" id="btn-prev" aria-label="Previous theme">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 1L1 6L6 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="ct-header__text">
+        <p class="theme-label">
+          <span id="label-word-1">—</span><span>THEME</span><span>IS</span>
+        </p>
+        <h2 class="theme-title ct-theme-title" id="ct-title">—</h2>
+      </div>
+
+      <button class="nav-btn nav-btn--next" id="btn-next" aria-label="Next theme">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L6 6L1 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Barn doors -->
+    <div class="barn-wrap" id="barn-wrap">
+
+      <div class="barn-door barn-door--left" id="door-left">
+        <div class="contributor">
+          <h3 class="contributor__name" id="name-left">—</h3>
+          <div class="contributor__frame" id="frame-left">
+
+            <!-- State A: not yet seen -->
+            <div class="unseen-state" id="unseen-left">
+              <svg class="unseen-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L46 46" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M8.5 13.5C5.2 16.3 3 19.5 2 22c3.8 9.4 12.4 16 22 16 3.5 0 6.8-.8 9.7-2.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M39.5 34.5C42.8 31.7 45 28.5 46 26c-3.8-9.4-12.4-16-22-16-3.5 0-6.8.8-9.7 2.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M17.5 17.5A9 9 0 0 0 15 24a9 9 0 0 0 9 9 9 9 0 0 0 6.5-2.5" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <p class="unseen-label">HAS NOT YET SEEN THIS THEME</p>
+            </div>
+
+            <!-- State B: image uploaded -->
+            <img class="contributor__image" id="image-left" src="" alt="" hidden />
+          </div>
+          <p class="contributor__caption" id="caption-left"></p>
+        </div>
+      </div>
+
+      <div class="barn-door barn-door--right" id="door-right">
+        <div class="contributor">
+          <h3 class="contributor__name" id="name-right">—</h3>
+          <div class="contributor__frame" id="frame-right">
+
+            <!-- State A: not yet seen -->
+            <div class="unseen-state" id="unseen-right">
+              <svg class="unseen-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L46 46" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M8.5 13.5C5.2 16.3 3 19.5 2 22c3.8 9.4 12.4 16 22 16 3.5 0 6.8-.8 9.7-2.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M39.5 34.5C42.8 31.7 45 28.5 46 26c-3.8-9.4-12.4-16-22-16-3.5 0-6.8.8-9.7 2.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+                <path d="M17.5 17.5A9 9 0 0 0 15 24a9 9 0 0 0 9 9 9 9 0 0 0 6.5-2.5" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <p class="unseen-label">HAS NOT YET SEEN THIS THEME</p>
+            </div>
+
+            <!-- State B: image uploaded -->
+            <img class="contributor__image" id="image-right" src="" alt="" hidden />
+          </div>
+          <p class="contributor__caption" id="caption-right"></p>
+        </div>
+      </div>
+
+    </div><!-- /barn-wrap -->
+  </div><!-- /ct-layout -->
+
+  <script src="./js/theme.js"></script>
+</body>
+</html>

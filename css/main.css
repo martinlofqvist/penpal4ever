@@ -1,0 +1,215 @@
+@import './reset.css';
+@import './variables.css';
+
+/* ─── Font ─── */
+
+@font-face {
+  font-family: 'Monument Extended';
+  src: url('../fonts/MonumentExtended-Bold.woff2') format('woff2'),
+       url('../fonts/MonumentExtended-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Base ─── */
+
+html, body {
+  height: 100%;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+/* ─── Layout ─── */
+
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ─── Panels ─── */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left panel */
+
+.panel--left {
+  background: var(--color-white);
+  padding: var(--space-md) var(--space-md) var(--space-md);
+  position: relative;
+  z-index: 1;
+}
+
+/* Right panel */
+
+.panel--right {
+  position: relative;
+  background: var(--color-grey);
+  overflow: hidden;
+}
+
+/* ─── Headline ─── */
+
+.headline {
+  margin-bottom: auto;
+}
+
+.headline__eyebrow {
+  font-family: var(--font-primary);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 0.1em;
+}
+
+.headline__title {
+  font-family: var(--font-primary);
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+
+  /* Break out of the left panel so the title spans full viewport width */
+  position: relative;
+  left: calc(-1 * var(--space-md));
+  width: 100vw;
+  padding-left: var(--space-md);
+}
+
+/* ─── Copy ─── */
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  max-width: 36ch;
+}
+
+.copy__line a {
+  font-family: var(--font-primary);
+  font-size: var(--text-copy);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.copy__line a:hover {
+  text-decoration: none;
+}
+
+/* ─── Footer ─── */
+
+.site-footer {
+  margin-top: auto;
+  padding-top: var(--space-md);
+}
+
+.footer__about {
+  font-family: var(--font-primary);
+  font-size: var(--text-footer);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+.footer__about:hover {
+  text-decoration: underline;
+}
+
+/* ─── Animation canvas ─── */
+
+#animation-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+/* ─── Buttons ─── */
+
+.panel__buttons {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  z-index: 2;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-primary);
+  font-size: var(--text-button);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border-radius: 9999px;
+  padding: 1em 2.5em;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+  width: min(18rem, 75%);
+  text-align: center;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn--primary {
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 2px solid var(--color-black);
+}
+
+.btn--secondary {
+  background: var(--color-white);
+  color: var(--color-black);
+  border: 2px solid var(--color-black);
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 768px) {
+  html, body {
+    overflow: auto;
+  }
+
+  .layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .headline__title {
+    white-space: normal;
+    width: 100%;
+    left: 0;
+    padding-left: 0;
+    font-size: clamp(3rem, 16vw, 6rem);
+  }
+
+  .panel--right {
+    min-height: 60vw;
+  }
+}

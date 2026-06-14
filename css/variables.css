@@ -1,0 +1,27 @@
+:root {
+  /* Colors */
+  --color-black:   #000000;
+  --color-white:   #ffffff;
+  --color-grey:    #c8c8c8;
+  --color-link:    #0000ee;
+
+  /* Typography */
+  --font-primary: 'Monument Extended', 'Arial Black', Impact, sans-serif;
+
+  /* Font sizes — fluid via clamp */
+  --text-eyebrow:  clamp(0.75rem, 1.2vw, 1rem);
+  --text-title:    clamp(3.5rem, 10.5vw, 11rem);
+  --text-copy:     clamp(1rem, 1.6vw, 1.35rem);
+  --text-button:   clamp(0.75rem, 1.1vw, 0.95rem);
+  --text-footer:   clamp(0.65rem, 1vw, 0.8rem);
+
+  /* Spacing */
+  --space-xs:  0.5rem;
+  --space-sm:  1rem;
+  --space-md:  2rem;
+  --space-lg:  4rem;
+  --space-xl:  6rem;
+
+  /* Layout */
+  --panel-split: 50vw;
+}
