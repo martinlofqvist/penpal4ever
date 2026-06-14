@@ -10,7 +10,7 @@
 <body>
 
   <!-- ─── NEW THEME intro overlay ─── -->
-  <div class="intro" id="intro" aria-hidden="true">
+  <div class="intro" id="intro">
     <div class="intro__block" id="intro-block">
       <p class="theme-label">
         <span>THE FIRST</span><span>THEME</span><span>IS</span>
@@ -22,36 +22,13 @@
   <!-- ─── CURRENT THEME layout ─── -->
   <div class="ct-layout" id="ct-layout">
 
-    <header class="ct-header">
-      <button class="nav-btn nav-btn--prev" id="btn-prev" aria-label="Previous theme">
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 1L1 6L6 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-
-      <div class="ct-header__text">
-        <p class="theme-label">
-          <span id="label-word-1">—</span><span>THEME</span><span>IS</span>
-        </p>
-        <h2 class="theme-title ct-theme-title" id="ct-title">—</h2>
-      </div>
-
-      <button class="nav-btn nav-btn--next" id="btn-next" aria-label="Next theme">
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 1L6 6L1 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </header>
-
-    <!-- Barn doors -->
+    <!-- Full-height grey panels (barn doors) — behind everything -->
     <div class="barn-wrap" id="barn-wrap">
 
       <div class="barn-door barn-door--left" id="door-left">
         <div class="contributor">
           <h3 class="contributor__name" id="name-left">—</h3>
           <div class="contributor__frame" id="frame-left">
-
-            <!-- State A: not yet seen -->
             <div class="unseen-state" id="unseen-left">
               <svg class="unseen-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 2L46 46" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
@@ -61,8 +38,6 @@
               </svg>
               <p class="unseen-label">HAS NOT YET SEEN THIS THEME</p>
             </div>
-
-            <!-- State B: image uploaded -->
             <img class="contributor__image" id="image-left" src="" alt="" hidden />
           </div>
           <p class="contributor__caption" id="caption-left"></p>
@@ -73,8 +48,6 @@
         <div class="contributor">
           <h3 class="contributor__name" id="name-right">—</h3>
           <div class="contributor__frame" id="frame-right">
-
-            <!-- State A: not yet seen -->
             <div class="unseen-state" id="unseen-right">
               <svg class="unseen-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 2L46 46" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/>
@@ -84,16 +57,37 @@
               </svg>
               <p class="unseen-label">HAS NOT YET SEEN THIS THEME</p>
             </div>
-
-            <!-- State B: image uploaded -->
             <img class="contributor__image" id="image-right" src="" alt="" hidden />
           </div>
           <p class="contributor__caption" id="caption-right"></p>
         </div>
       </div>
 
-    </div><!-- /barn-wrap -->
-  </div><!-- /ct-layout -->
+    </div>
+
+    <!-- Header overlaid on top of panels — no background -->
+    <header class="ct-header">
+      <button class="nav-btn nav-btn--prev" id="btn-prev" aria-label="Previous theme">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+          <path d="M6 1L1 6L6 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="ct-header__text">
+        <p class="theme-label">
+          <span id="label-word-1">THE FIRST</span><span>THEME</span><span>IS</span>
+        </p>
+        <h2 class="theme-title ct-theme-title" id="ct-title">—</h2>
+      </div>
+
+      <button class="nav-btn nav-btn--next" id="btn-next" aria-label="Next theme">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+          <path d="M1 1L6 6L1 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+  </div>
 
   <script src="./js/theme.js"></script>
 </body>

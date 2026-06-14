@@ -10,49 +10,46 @@
 </head>
 <body>
 
-  <div class="layout">
+  <div class="home">
 
-    <!-- Left panel -->
-    <div class="panel panel--left">
-
-      <header class="headline">
-        <p class="headline__eyebrow">YOU ARE MY</p>
-        <h1 class="headline__title">PENPAL4EVER</h1>
-      </header>
-
-      <main class="copy">
-        <p class="copy__line"><a href="#">A place for creatives to correspond.</a></p>
-        <p class="copy__line"><a href="#">One theme, two interpretations, an ongoing exchange.</a></p>
-        <p class="copy__line"><a href="#">Invite your penpal and start your correspondance today.</a></p>
-      </main>
-
-      <footer class="site-footer">
-        <a class="footer__about" href="./about.html">ABOUT</a>
-      </footer>
-
-    </div>
-
-    <!-- Right panel -->
-    <div class="panel panel--right">
+    <!-- Animation area — right side, starts at ~48% -->
+    <div class="anim-area">
       <canvas id="animation-canvas"></canvas>
-      <div class="panel__buttons">
-        <a href="#" class="btn btn--primary">NEW PENPAL</a>
-        <a href="#" class="btn btn--secondary">CONTINUE PENPAL</a>
+      <div class="home-buttons">
+        <a href="./theme.html" class="btn btn--primary">NEW PENPAL</a>
+        <a href="./theme.html" class="btn btn--secondary">CONTINUE PENPAL</a>
       </div>
     </div>
+
+    <!-- Headline — full-width overlay -->
+    <div class="home-headline">
+      <p class="home-eyebrow">YOU ARE MY</p>
+      <h1 class="home-title">PENPAL4EVER</h1>
+    </div>
+
+    <!-- Copy — left side -->
+    <main class="home-copy">
+      <p><a href="#">A place for creatives to correspond.</a></p>
+      <p><a href="#">One theme, two interpretations, an ongoing exchange.</a></p>
+      <p><a href="#">Invite your penpal and start your correspondance today.</a></p>
+    </main>
+
+    <!-- About — bottom left -->
+    <footer class="home-footer">
+      <a href="./about.html">ABOUT</a>
+    </footer>
 
   </div>
 
   <script src="./js/animation.js"></script>
   <script src="./js/modal.js"></script>
 
-  <!-- ─── New Penpal modal ─── -->
+  <!-- New Penpal modal -->
   <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
       <button class="modal__close" id="modal-close" aria-label="Close">✕</button>
       <h2 class="modal__title" id="modal-title">NEW PENPAL</h2>
       <p class="modal__subtitle">START A VISUAL CORRESPONDENCE</p>
-
       <form id="penpal-form" novalidate>
         <div class="modal__field">
           <label class="modal__label" for="input-your-name">Your name</label>

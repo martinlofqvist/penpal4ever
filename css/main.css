@@ -1,7 +1,7 @@
 @import './reset.css';
 @import './variables.css';
 
-/* ─── Font ─── */
+/* ─── Fonts ─── */
 
 @font-face {
   font-family: 'Monument Extended';
@@ -12,127 +12,56 @@
   font-display: swap;
 }
 
+/* Swiss 721 Extended (copy text font) — add files to /fonts/ when available */
+@font-face {
+  font-family: 'Swiss 721 Extended';
+  src: url('../fonts/Swiss721Extended-Regular.woff2') format('woff2'),
+       url('../fonts/Swiss721Extended-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── Base ─── */
 
 html, body {
+  width: 100%;
   height: 100%;
+  overflow: hidden;
   background: var(--color-white);
   color: var(--color-black);
-  font-family: var(--font-primary);
-  overflow: hidden;
 }
 
-/* ─── Layout ─── */
+/* ════════════════════════════════════════
+   HOME PAGE
+   Mirrors Figma: absolute-positioned layers
+   on a white 1512×982 canvas.
+   All positions expressed as vw/vh %.
+   ════════════════════════════════════════ */
 
-.layout {
-  display: flex;
+.home {
+  position: relative;
+  width: 100vw;
   height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-}
-
-/* ─── Panels ─── */
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* Left panel */
-
-.panel--left {
   background: var(--color-white);
-  padding: var(--space-md) var(--space-md) var(--space-md);
-  position: relative;
-  z-index: 1;
-}
-
-/* Right panel */
-
-.panel--right {
-  position: relative;
-  background: var(--color-grey);
   overflow: hidden;
-  isolation: isolate; /* own stacking context — keeps canvas contained */
 }
 
-/* ─── Headline ─── */
+/* ─── Animation area ─── */
+/*
+  Figma: left=729px, width=992px on 1512px canvas
+  729/1512 = 48.2% from left
+  992/1512 = 65.6% wide (overflows right edge intentionally)
+*/
 
-.headline {
-  margin-bottom: auto;
+.anim-area {
+  position: absolute;
+  left: 48.2%;
+  top: 0;
+  width: 65.6%;   /* intentionally overflows — matches Figma bleed */
+  height: 100%;
+  isolation: isolate;
 }
-
-.headline__eyebrow {
-  font-family: var(--font-primary);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  line-height: 1;
-  margin-bottom: 0.1em;
-}
-
-.headline__title {
-  font-family: var(--font-primary);
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-
-  /* Break out of the left panel so the title spans full viewport width */
-  position: relative;
-  left: calc(-1 * var(--space-md));
-  width: 100vw;
-  padding-left: var(--space-md);
-}
-
-/* ─── Copy ─── */
-
-.copy {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  max-width: 36ch;
-}
-
-.copy__line a {
-  font-family: var(--font-primary);
-  font-size: var(--text-copy);
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-
-.copy__line a:hover {
-  text-decoration: none;
-}
-
-/* ─── Footer ─── */
-
-.site-footer {
-  margin-top: auto;
-  padding-top: var(--space-md);
-}
-
-.footer__about {
-  font-family: var(--font-primary);
-  font-size: var(--text-footer);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-black);
-  text-decoration: none;
-}
-
-.footer__about:hover {
-  text-decoration: underline;
-}
-
-/* ─── Animation canvas ─── */
 
 #animation-canvas {
   position: absolute;
@@ -140,37 +69,123 @@ html, body {
   width: 100%;
   height: 100%;
   display: block;
-  z-index: -1; /* behind everything inside .panel--right */
+  z-index: -1;
 }
 
-/* ─── Buttons ─── */
-
-.panel__buttons {
+.home-buttons {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-  z-index: 2;
+  gap: 1rem;
+  padding-left: 10%;  /* push buttons toward center of the animation area */
 }
+
+/* ─── Headline ─── */
+/*
+  Figma: left=49px (3.2%), top=36px (3.7%), width=1446px (95.6%)
+  Font: Monument Extended Bold, 135px (8.9vw)
+  Spans OVER animation area intentionally.
+*/
+
+.home-headline {
+  position: absolute;
+  left: 3.2%;
+  top: 3.7%;
+  width: 95.6%;
+  pointer-events: none;
+}
+
+.home-eyebrow {
+  font-family: var(--font-primary);
+  font-size: clamp(0.75rem, 1.45vw, 1.375rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.1em;
+}
+
+.home-title {
+  font-family: var(--font-primary);
+  font-size: clamp(3.5rem, 8.9vw, 10rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ─── Copy ─── */
+/*
+  Figma: left=83px (5.5%), top=297px (30.2%), width=637px (42.1%)
+  Font: Swiss 721 Extended Regular, 28px (1.85vw)
+  Line-height: 1.33
+*/
+
+.home-copy {
+  position: absolute;
+  left: 5.5%;
+  top: 30.2%;
+  width: 42.1%;
+  font-family: 'Swiss 721 Extended', 'Arial Nova', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(1rem, 1.85vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.33;
+  display: flex;
+  flex-direction: column;
+  gap: 1.33em;
+}
+
+.home-copy a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.home-copy a:hover {
+  text-decoration: none;
+}
+
+/* ─── Footer / ABOUT ─── */
+
+.home-footer {
+  position: absolute;
+  left: 3.2%;
+  bottom: 2.5%;
+}
+
+.home-footer a {
+  font-family: var(--font-primary);
+  font-size: clamp(0.65rem, 0.9vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+.home-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Buttons ─── */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-primary);
-  font-size: var(--text-button);
+  font-size: clamp(0.75rem, 1.45vw, 1.375rem);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-decoration: none;
   border-radius: 9999px;
-  padding: 1em 2.5em;
+  padding: 0.85em 2em;
   cursor: pointer;
   transition: opacity 150ms ease;
-  width: min(18rem, 75%);
+  width: clamp(14rem, 25.5vw, 24rem);  /* 385/1512 = 25.5% */
   text-align: center;
+  white-space: nowrap;
 }
 
 .btn:hover {
@@ -187,30 +202,4 @@ html, body {
   background: var(--color-white);
   color: var(--color-black);
   border: 2px solid var(--color-black);
-}
-
-/* ─── Responsive ─── */
-
-@media (max-width: 768px) {
-  html, body {
-    overflow: auto;
-  }
-
-  .layout {
-    flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .headline__title {
-    white-space: normal;
-    width: 100%;
-    left: 0;
-    padding-left: 0;
-    font-size: clamp(3rem, 16vw, 6rem);
-  }
-
-  .panel--right {
-    min-height: 60vw;
-  }
 }

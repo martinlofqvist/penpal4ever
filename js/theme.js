@@ -5,32 +5,48 @@
  *  1. NEW THEME intro animation (2s hold → fly to top)
  *  2. CURRENT THEME barn-door reveal
  *  3. Left/right arrow navigation between themes
- *  4. Next button disabled until both sides have uploaded
+ *     with close → flash → open animation
+ *
+ * DEBUG: next button enabled whenever a next theme exists,
+ *        regardless of upload status.
  */
 
 (function () {
 
+  const DEBUG = true; // set false in production to enforce upload requirement
+
+  // ─── Timing (ms) ────────────────────────────────────────
+
+  const INTRO_HOLD_MS  = 2000;
+  const INTRO_FLY_MS   = 380;
+  const BARN_OPEN_MS   = 1300;
+  const BARN_CLOSE_MS  = 1300;
+  const FLASH_HOLD_MS  = 600;
+  const FLASH_FADE_MS  = 200;
+
   // ─── State ───────────────────────────────────────────────
 
-  let themes    = [];
-  let themeIndex = 0;
+  let themes      = [];
+  let themeIndex  = 0;
+  let isAnimating = false;
 
   // ─── DOM refs ────────────────────────────────────────────
 
-  const intro      = document.getElementById('intro');
-  const introBlock = document.getElementById('intro-block');
-  const introTitle = document.getElementById('intro-title');
+  const intro       = document.getElementById('intro');
+  const introBlock  = document.getElementById('intro-block');
+  const introTitle  = document.getElementById('intro-title');
+  const introLabel  = intro.querySelector('.theme-label');
 
-  const ctLayout   = document.getElementById('ct-layout');
-  const ctTitle    = document.getElementById('ct-title');
-  const labelWord1 = document.getElementById('label-word-1');
+  const ctLayout    = document.getElementById('ct-layout');
+  const ctTitle     = document.getElementById('ct-title');
+  const labelWord1  = document.getElementById('label-word-1');
 
-  const barnWrap   = document.getElementById('barn-wrap');
-  const doorLeft   = document.getElementById('door-left');
-  const doorRight  = document.getElementById('door-right');
+  const barnWrap    = document.getElementById('barn-wrap');
+  const doorLeft    = document.getElementById('door-left');
+  const doorRight   = document.getElementById('door-right');
 
-  const nameLeft   = document.getElementById('name-left');
-  const nameRight  = document.getElementById('name-right');
+  const nameLeft    = document.getElementById('name-left');
+  const nameRight   = document.getElementById('name-right');
 
   const unseenLeft  = document.getElementById('unseen-left');
   const unseenRight = document.getElementById('unseen-right');
@@ -46,10 +62,6 @@
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  /**
-   * Ordinal word for the theme position (1st, 2nd, 3rd…)
-   * Used in the label: "THE FIRST THEME IS"
-   */
   function ordinalLabel(n) {
     const labels = ['FIRST','SECOND','THIRD','FOURTH','FIFTH',
                     'SIXTH','SEVENTH','EIGHTH','NINTH','TENTH'];
@@ -70,113 +82,168 @@
     }
   }
 
+  // ─── Update nav button states ─────────────────────────────
+
+  function updateNavButtons() {
+    btnPrev.disabled = (themeIndex === 0);
+
+    const hasNext      = themeIndex < themes.length - 1;
+    const bothUploaded = !!(themes[themeIndex]?.left?.image && themes[themeIndex]?.right?.image);
+    btnNext.disabled   = !(hasNext && (DEBUG || bothUploaded));
+  }
+
   // ─── Render theme content ─────────────────────────────────
 
   function renderTheme(theme, index) {
     const ord = ordinalLabel(index);
 
-    // Intro text
+    // Intro overlay text
     introTitle.textContent = `"${theme.title}"`;
+    if (introLabel) {
+      const spans = introLabel.querySelectorAll('span');
+      if (spans[0]) spans[0].textContent = `THE ${ord}`;
+    }
 
-    // CT header
+    // CT header text
     ctTitle.textContent    = `"${theme.title}"`;
     labelWord1.textContent = `THE ${ord}`;
 
-    // Names (static for now, wired to penpal data later)
+    // Names
     nameLeft.textContent  = theme.left?.name  || 'DANIEL';
     nameRight.textContent = theme.right?.name || 'MARTIN';
 
     // Left side
     if (theme.left?.image) {
-      imageLeft.src = theme.left.image;
-      imageLeft.alt = theme.left.caption || '';
-      imageLeft.hidden = false;
+      imageLeft.src     = theme.left.image;
+      imageLeft.alt     = theme.left.caption || '';
+      imageLeft.hidden  = false;
       unseenLeft.hidden = true;
       captionLeft.textContent = theme.left.caption || '';
     } else {
-      imageLeft.hidden = true;
+      imageLeft.hidden  = true;
       unseenLeft.hidden = false;
       captionLeft.textContent = '';
     }
 
     // Right side
     if (theme.right?.image) {
-      imageRight.src = theme.right.image;
-      imageRight.alt = theme.right.caption || '';
-      imageRight.hidden = false;
+      imageRight.src     = theme.right.image;
+      imageRight.alt     = theme.right.caption || '';
+      imageRight.hidden  = false;
       unseenRight.hidden = true;
       captionRight.textContent = theme.right.caption || '';
     } else {
-      imageRight.hidden = true;
+      imageRight.hidden  = true;
       unseenRight.hidden = false;
       captionRight.textContent = '';
     }
 
-    // Navigation button states
-    btnPrev.disabled = (index === 0);
+    updateNavButtons();
+  }
 
-    const bothUploaded = !!(theme.left?.image && theme.right?.image);
-    const hasNext      = index < themes.length - 1;
-    btnNext.disabled   = !(bothUploaded && hasNext);
+  // ─── Header text fade (between themes) ───────────────────
+
+  const ctHeaderText = document.querySelector('.ct-header__text');
+
+  function fadeHeaderOut() {
+    ctHeaderText.style.transition = `opacity ${FLASH_FADE_MS}ms ease`;
+    ctHeaderText.style.opacity = '0';
+  }
+
+  function fadeHeaderIn() {
+    ctHeaderText.style.transition = `opacity ${FLASH_FADE_MS}ms ease`;
+    ctHeaderText.style.opacity = '1';
+  }
+
+  // ─── Barn door helpers ────────────────────────────────────
+
+  function closeDoors() {
+    doorLeft.classList.remove('is-open');
+    doorRight.classList.remove('is-open');
+    doorLeft.classList.add('is-closing');
+    doorRight.classList.add('is-closing');
+  }
+
+  function resetDoorsToClose() {
+    doorLeft.classList.remove('is-closing', 'is-open');
+    doorRight.classList.remove('is-closing', 'is-open');
+    // Force the element back to the closed transform without animation
+    doorLeft.style.animation  = 'none';
+    doorRight.style.animation = 'none';
+    doorLeft.style.transform  = 'rotateY(-90deg)';
+    doorRight.style.transform = 'rotateY(90deg)';
+    // Trigger reflow so the next animation starts from scratch
+    void doorLeft.offsetWidth;
+    doorLeft.style.animation  = '';
+    doorRight.style.animation = '';
+    doorLeft.style.transform  = '';
+    doorRight.style.transform = '';
+  }
+
+  function openDoors() {
+    doorLeft.classList.add('is-open');
+    doorRight.classList.add('is-open');
   }
 
   // ─── Navigation ──────────────────────────────────────────
 
-  function navigateTo(newIndex) {
+  async function navigateTo(newIndex) {
     if (newIndex < 0 || newIndex >= themes.length) return;
+    if (isAnimating) return;
+    isAnimating = true;
+
+    // Lock nav buttons during transition
+    btnPrev.disabled = true;
+    btnNext.disabled = true;
+
+    // 1. Close doors + fade header text out simultaneously
+    fadeHeaderOut();
+    closeDoors();
+    await sleep(BARN_CLOSE_MS);
+
+    // 2. Update content (doors are closed, nothing visible)
     themeIndex = newIndex;
-
-    // Reset barn doors
-    doorLeft.classList.remove('is-open');
-    doorRight.classList.remove('is-open');
-    doorLeft.style.transform  = 'rotateY(-90deg)';
-    doorRight.style.transform = 'rotateY(90deg)';
-
     renderTheme(themes[themeIndex], themeIndex);
+    resetDoorsToClose();
 
-    // Re-open doors after a tick
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        doorLeft.style.transform  = '';
-        doorRight.style.transform = '';
-        doorLeft.classList.add('is-open');
-        doorRight.classList.add('is-open');
-      });
-    });
+    // 3. Open doors + fade header text in simultaneously
+    fadeHeaderIn();
+    openDoors();
+    await sleep(BARN_OPEN_MS);
+
+    isAnimating = false;
+    updateNavButtons();
   }
 
   btnPrev.addEventListener('click', () => navigateTo(themeIndex - 1));
   btnNext.addEventListener('click', () => navigateTo(themeIndex + 1));
 
-  // ─── Intro sequence ───────────────────────────────────────
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft')  navigateTo(themeIndex - 1);
+    if (e.key === 'ArrowRight') navigateTo(themeIndex + 1);
+  });
+
+  // ─── Initial intro sequence ───────────────────────────────
 
   async function runIntroSequence() {
+    await sleep(INTRO_HOLD_MS);
 
-    // Hold for 2s so user reads the NEW THEME text
-    await sleep(2000);
-
-    // Calculate how far up the intro block needs to fly
-    // so it lands at the CT header position
+    // FLIP: measure delta between intro block and ct header text
     const blockRect  = introBlock.getBoundingClientRect();
-    const headerRect = ctLayout.querySelector('.ct-header__text').getBoundingClientRect();
+    const headerText = ctLayout.querySelector('.ct-header__text');
+    const headerRect = headerText.getBoundingClientRect();
     const delta      = headerRect.top - blockRect.top;
     introBlock.style.setProperty('--intro-fly-offset', `translateY(${delta}px)`);
 
-    // Fly text upward
     introBlock.classList.add('is-flying');
-    await sleep(380);
+    await sleep(INTRO_FLY_MS);
 
-    // Fade the white overlay away; reveal CT layout
     intro.classList.add('is-gone');
     ctLayout.classList.add('is-visible');
-    await sleep(180);
+    await sleep(FLASH_FADE_MS);
 
-    // Remove intro entirely
     intro.classList.add('is-done');
-
-    // Barn doors open
-    doorLeft.classList.add('is-open');
-    doorRight.classList.add('is-open');
+    openDoors();
   }
 
   // ─── Init ─────────────────────────────────────────────────
@@ -185,7 +252,6 @@
     themes = await loadThemes();
     if (!themes.length) return;
 
-    // Read ?id=N from URL (1-based), default to 1
     const params = new URLSearchParams(window.location.search);
     const id     = parseInt(params.get('id') || '1', 10);
     themeIndex   = Math.max(0, Math.min(id - 1, themes.length - 1));
