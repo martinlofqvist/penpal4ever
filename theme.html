@@ -67,24 +67,29 @@
 
     <!-- Header overlaid on top of panels — no background -->
     <header class="ct-header">
-      <button class="nav-btn nav-btn--prev" id="btn-prev" aria-label="Previous theme">
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-          <path d="M6 1L1 6L6 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
 
+      <!-- Text spans full width, centered — matching Figma top section -->
       <div class="ct-header__text">
         <p class="theme-label">
-          <span id="label-word-1">THE FIRST</span><span>THEME</span><span>IS</span>
+          <span>THE</span><span id="label-ordinal" class="label-ordinal"></span><span>THEME</span><span>IS</span>
         </p>
         <h2 class="theme-title ct-theme-title" id="ct-title">—</h2>
       </div>
 
-      <button class="nav-btn nav-btn--next" id="btn-next" aria-label="Next theme">
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-          <path d="M1 1L6 6L1 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+      <!-- Nav buttons float absolute over the title, matching Figma btns-2 (left:42px, top:60px) -->
+      <div class="ct-header__nav">
+        <button class="nav-btn nav-btn--prev" id="btn-prev" aria-label="Previous theme">
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M6 1L1 6L6 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="nav-btn nav-btn--next" id="btn-next" aria-label="Next theme">
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1L6 6L1 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
     </header>
 
   </div>

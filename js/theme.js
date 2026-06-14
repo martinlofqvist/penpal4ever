@@ -37,9 +37,9 @@
   const introTitle  = document.getElementById('intro-title');
   const introLabel  = intro.querySelector('.theme-label');
 
-  const ctLayout    = document.getElementById('ct-layout');
-  const ctTitle     = document.getElementById('ct-title');
-  const labelWord1  = document.getElementById('label-word-1');
+  const ctLayout      = document.getElementById('ct-layout');
+  const ctTitle       = document.getElementById('ct-title');
+  const labelOrdinal  = document.getElementById('label-ordinal');
 
   const barnWrap    = document.getElementById('barn-wrap');
   const doorLeft    = document.getElementById('door-left');
@@ -104,9 +104,10 @@
       if (spans[0]) spans[0].textContent = `THE ${ord}`;
     }
 
-    // CT header text
-    ctTitle.textContent    = `"${theme.title}"`;
-    labelWord1.textContent = `THE ${ord}`;
+    // CT header text — title always updates; ordinal shown on initial load only
+    ctTitle.textContent        = `"${theme.title}"`;
+    labelOrdinal.textContent   = ord;
+    labelOrdinal.classList.remove('is-hidden');
 
     // Names
     nameLeft.textContent  = theme.left?.name  || 'DANIEL';
@@ -204,6 +205,8 @@
     // 2. Update content (doors are closed, nothing visible)
     themeIndex = newIndex;
     renderTheme(themes[themeIndex], themeIndex);
+    // Hide ordinal on navigation — header shows "THE __ THEME IS"
+    labelOrdinal.classList.add('is-hidden');
     resetDoorsToClose();
 
     // 3. Open doors + fade header text in simultaneously
@@ -248,14 +251,25 @@
 
   // ─── Init ─────────────────────────────────────────────────
 
+  // ─── Fisher-Yates shuffle ────────────────────────────────
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   async function init() {
-    themes = await loadThemes();
-    if (!themes.length) return;
+    const raw = await loadThemes();
+    if (!raw.length) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const id     = parseInt(params.get('id') || '1', 10);
-    themeIndex   = Math.max(0, Math.min(id - 1, themes.length - 1));
+    // Shuffle themes into a random order each session
+    themes = shuffle(raw);
 
+    themeIndex = 0;
     renderTheme(themes[themeIndex], themeIndex);
     runIntroSequence();
   }
