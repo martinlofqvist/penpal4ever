@@ -55,6 +55,7 @@ html, body {
   position: relative;
   background: var(--color-grey);
   overflow: hidden;
+  isolation: isolate; /* own stacking context — keeps canvas contained */
 }
 
 /* ─── Headline ─── */
@@ -139,7 +140,7 @@ html, body {
   width: 100%;
   height: 100%;
   display: block;
-  z-index: 0;
+  z-index: -1; /* behind everything inside .panel--right */
 }
 
 /* ─── Buttons ─── */
