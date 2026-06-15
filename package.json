@@ -13,16 +13,22 @@
     "start": "next start",
     "lint": "next lint",
     "generate:types": "payload generate:types",
-    "generate:importmap": "payload generate:importmap"
+    "generate:importmap": "payload generate:importmap",
+    "server": "node server.js"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.85.1",
     "@payloadcms/next": "3.85.1",
     "@payloadcms/richtext-lexical": "3.85.1",
     "@payloadcms/translations": "3.85.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "graphql": "^16.8.1",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^3.3.7",
     "next": "~15.4.11",
     "payload": "3.85.1",
+    "pg": "^8.12.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sharp": "^0.33.0"

@@ -1,18 +1,6 @@
-@import './reset.css';
-@import './variables.css';
-
-/* ─── Font ─── */
-
-@font-face {
-  font-family: 'Monument Extended';
-  src: url('../fonts/MonumentExtended-Bold.woff2') format('woff2'),
-       url('../fonts/MonumentExtended-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* ─── Base ─── */
+/* ════════════════════════════════════════
+   THEME PAGE
+   ════════════════════════════════════════ */
 
 body {
   background: var(--color-white);
@@ -22,45 +10,7 @@ body {
   overflow: hidden;
 }
 
-/* ─── Shared type ─── */
-
-/*
-  Shared label layout — identical between intro overlay and ct-header.
-  Both use 4 spans: THE | ordinal | THEME | IS.
-  Same grid, same width, same gap → FLIP animation lands pixel-perfect.
-*/
-.theme-label {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 56vw;
-  margin: 0 auto;
-  font-size: clamp(0.8rem, 1.45vw, 1.375rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: calc(28 / 22); /* Figma: h-[28px] box on 22px text */
-}
-
-.theme-label span {
-  text-align: center;
-}
-
-/* Ordinal cross-fades during navigation */
-.label-ordinal {
-  transition: opacity 0.2s ease;
-}
-
-.theme-title {
-  font-size: clamp(2.5rem, 6.81vw, 6.44rem); /* 103px at 1512px canvas */
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 0.9247;
-  text-align: center;
-  width: 100%;
-}
-
-/* ════════════════════════════════════════
-   NEW THEME INTRO
-   ════════════════════════════════════════ */
+/* ─── Intro overlay ─── */
 
 .intro {
   position: fixed;
@@ -79,8 +29,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem; /* matches .ct-header__text gap exactly */
-  transition: transform 0.38s cubic-bezier(0.86, 0, 0.07, 1);
+  gap: 0.5rem;
+  /* Half the original 0.38s → 0.19s */
+  transition: transform 0.19s cubic-bezier(0.86, 0, 0.07, 1);
   will-change: transform;
 }
 
@@ -88,23 +39,16 @@ body {
   transform: var(--intro-fly-offset, translateY(-42vh));
 }
 
-.intro.is-gone {
-  background: transparent;
-}
+.intro.is-gone { background: transparent; }
+.intro.is-done { display: none; }
 
-.intro.is-done {
-  display: none;
-}
-
-/* ════════════════════════════════════════
-   CURRENT THEME LAYOUT
-   ════════════════════════════════════════ */
+/* ─── CT layout ─── */
 
 .ct-layout {
   position: fixed;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.1s ease;
   pointer-events: none;
 }
 
@@ -113,7 +57,7 @@ body {
   pointer-events: auto;
 }
 
-/* ─── Barn doors — full height, behind header ─── */
+/* ─── Barn doors ─── */
 
 .barn-wrap {
   position: absolute;
@@ -122,145 +66,83 @@ body {
   perspective: 1400px;
 }
 
-.barn-door--left {
-  background: #eaeaea;
-  transform-origin: left center;
-  transform: rotateY(-90deg);
+.barn-door { flex: 1; height: 100%; position: relative; will-change: transform; }
+.barn-door--left  { background: #eaeaea; transform-origin: left center;  transform: rotateY(-90deg); }
+.barn-door--right { background: #c9c9c9; transform-origin: right center; transform: rotateY(90deg);  }
+
+/* Half speed: 1300ms → 650ms */
+.barn-door--left.is-open  { animation: door-open-left  0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.barn-door--right.is-open { animation: door-open-right 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.barn-door--left.is-closing  { animation: door-close-left  0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.barn-door--right.is-closing { animation: door-close-right 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+@keyframes door-open-left   { from { transform: rotateY(-90deg); } to { transform: rotateY(0deg); } }
+@keyframes door-open-right  { from { transform: rotateY(90deg);  } to { transform: rotateY(0deg); } }
+@keyframes door-close-left  { from { transform: rotateY(0deg);   } to { transform: rotateY(-90deg); } }
+@keyframes door-close-right { from { transform: rotateY(0deg);   } to { transform: rotateY(90deg);  } }
+
+/* Align contributor content */
+.barn-door {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
-.barn-door--right {
-  background: #c9c9c9;
-  transform-origin: right center;
-  transform: rotateY(90deg);
-}
+/* ─── Header ─── */
 
-.barn-door--left.is-open {
-  animation: door-open-left 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.barn-door--right.is-open {
-  animation: door-open-right 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.barn-door--left.is-closing {
-  animation: door-close-left 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.barn-door--right.is-closing {
-  animation: door-close-right 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes door-open-left {
-  from { transform: rotateY(-90deg); }
-  to   { transform: rotateY(0deg); }
-}
-
-@keyframes door-open-right {
-  from { transform: rotateY(90deg); }
-  to   { transform: rotateY(0deg); }
-}
-
-@keyframes door-close-left {
-  from { transform: rotateY(0deg); }
-  to   { transform: rotateY(-90deg); }
-}
-
-@keyframes door-close-right {
-  from { transform: rotateY(0deg); }
-  to   { transform: rotateY(90deg); }
-}
-
-/* ─── Header — absolute overlay, no background ─── */
-/*
-  Figma: top section at top=30px, flex-col, items-center, gap=3px, full width.
-  Buttons are absolute at left=42px, top=60px within the top section.
-*/
-
-/*
-  .ct-header has the same flex structure as .intro__block —
-  flex-col, align-center, gap-0.5rem — so the FLIP animation
-  lands pixel-perfect and typography is identical in both states.
-*/
 .ct-header {
   position: absolute;
-  top: 3.06vh;   /* 30/982 */
-  left: 0;
-  right: 0;
+  top: 3.06vh;
+  left: 0; right: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;   /* matches .intro__block exactly */
+  gap: 3px;
   pointer-events: none;
 }
 
-/* Nav buttons: absolute, float over the title area — Figma btns-2 */
+.ct-header__text {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Nav buttons */
 .ct-header__nav {
   position: absolute;
-  top: 6.11vh;   /* 60/982 — within top section, vertically centered on title */
-  left: 2.78%;   /* 42/1512 */
-  right: 2.78%;
+  top: 6.11vh;
+  left: 2.78%; right: 2.78%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   pointer-events: auto;
 }
 
-/* ─── Nav buttons ─── */
-
 .nav-btn {
-  width: 1.9rem;
-  height: 1.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 1.9rem; height: 1.9rem;
+  display: flex; align-items: center; justify-content: center;
   background: var(--color-black);
   border: none;
   border-radius: 6px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.1s ease;
 }
+.nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.nav-btn:not(:disabled):hover { opacity: 0.75; }
 
-.nav-btn:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-
-.nav-btn:not(:disabled):hover {
-  opacity: 0.75;
-}
-
-/* ════════════════════════════════════════
-   CONTRIBUTOR PANELS
-   ════════════════════════════════════════ */
-
-/*
-  Figma: panel is 756×982px.
-  Parent panel: items-end justify-center → content block is bottom-aligned.
-  Content block: h=744px (75.76vh), gap=18px (1.83vh), px=81px (10.71%).
-  Name → gap 18px → photo frame 520px tall (52.95vh) → gap 18px → caption.
-*/
-
-.barn-door {
-  flex: 1;
-  height: 100%;
-  position: relative;
-  will-change: transform;
-  /* Bottom-align content block, matching Figma items-end justify-center */
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
+/* ─── Contributor panels ─── */
 
 .contributor {
-  /* Content block: 744/982 = 75.76vh, bottom edge flush with panel bottom */
   height: 75.76vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 10.71%; /* 81/756 */
-  gap: 1.83vh;       /* 18/982 */
+  padding: 0 10.71%;
+  gap: 1.83vh;
   width: 100%;
 }
 
@@ -273,7 +155,6 @@ body {
 }
 
 .contributor__frame {
-  /* Photo frame: 520/982 = 52.95vh tall, 480:520 aspect ratio */
   height: 52.95vh;
   aspect-ratio: 480 / 520;
   flex-shrink: 0;
@@ -288,8 +169,7 @@ body {
 .contributor__image {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
 }
 
@@ -302,9 +182,9 @@ body {
   flex-shrink: 0;
 }
 
-/* ─── Unseen state ─── */
+/* ─── Upload zone (replaces unseen-state) ─── */
 
-.unseen-state {
+.upload-zone {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -312,17 +192,102 @@ body {
   gap: 1rem;
   width: 100%;
   height: 100%;
+  cursor: pointer;
+  border: 2.5px dashed #c0c0c0;
+  border-radius: 4px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  padding: 1rem;
 }
 
-.unseen-icon {
-  width: 3rem;
-  height: 3rem;
+.upload-zone:hover,
+.upload-zone.is-dragging {
+  border-color: var(--color-black);
+  background: rgba(0,0,0,0.03);
 }
 
-.unseen-label {
-  font-size: clamp(0.55rem, 0.9vw, 0.875rem);
+.upload-zone__icon {
+  width: clamp(2.5rem, 5vw, 4rem);
+  height: clamp(2.5rem, 5vw, 4rem);
+  color: #9a9a9a;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.upload-zone:hover .upload-zone__icon,
+.upload-zone.is-dragging .upload-zone__icon {
+  color: var(--color-black);
+}
+
+.upload-zone__label {
+  font-size: clamp(0.55rem, 0.9vw, 0.75rem);
   font-weight: 700;
-  color: #474747;
+  color: #9a9a9a;
   letter-spacing: -0.01em;
   text-align: center;
+  transition: color 0.15s ease;
 }
+
+.upload-zone:hover .upload-zone__label,
+.upload-zone.is-dragging .upload-zone__label {
+  color: var(--color-black);
+}
+
+.upload-zone__sub {
+  font-size: clamp(0.5rem, 0.75vw, 0.625rem);
+  font-weight: 700;
+  color: #c0c0c0;
+  text-align: center;
+}
+
+/* Upload progress */
+.upload-zone.is-uploading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.upload-zone.is-uploading .upload-zone__label::after {
+  content: '…';
+  animation: ellipsis 1s steps(4, end) infinite;
+}
+
+@keyframes ellipsis {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+/* ─── Session info bar (bottom) ─── */
+
+.session-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 2.5rem;
+  background: var(--color-black);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 20;
+  font-size: clamp(0.5rem, 0.8vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0 1rem;
+}
+
+.session-bar__id {
+  opacity: 0.5;
+  font-size: 0.9em;
+}
+
+.session-bar__copy {
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  padding: 0.15em 0.5em;
+}
+.session-bar__copy:hover { opacity: 1; }
