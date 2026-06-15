@@ -104,10 +104,9 @@
       if (spans[0]) spans[0].textContent = `THE ${ord}`;
     }
 
-    // CT header text — title always updates; ordinal shown on initial load only
-    ctTitle.textContent        = `"${theme.title}"`;
-    labelOrdinal.textContent   = ord;
-    labelOrdinal.classList.remove('is-hidden');
+    // CT header text
+    ctTitle.textContent      = `"${theme.title}"`;
+    labelOrdinal.textContent = ord;
 
     // Names
     nameLeft.textContent  = theme.left?.name  || 'DANIEL';
@@ -142,18 +141,23 @@
     updateNavButtons();
   }
 
-  // ─── Header text fade (between themes) ───────────────────
-
-  const ctHeaderText = document.querySelector('.ct-header__text');
+  // ─── Header fade (between themes) ────────────────────────
+  // Only fade the ordinal + title — THE / THEME / IS stay visible throughout
 
   function fadeHeaderOut() {
-    ctHeaderText.style.transition = `opacity ${FLASH_FADE_MS}ms ease`;
-    ctHeaderText.style.opacity = '0';
+    const t = `opacity ${FLASH_FADE_MS}ms ease`;
+    labelOrdinal.style.transition = t;
+    labelOrdinal.style.opacity    = '0';
+    ctTitle.style.transition      = t;
+    ctTitle.style.opacity         = '0';
   }
 
   function fadeHeaderIn() {
-    ctHeaderText.style.transition = `opacity ${FLASH_FADE_MS}ms ease`;
-    ctHeaderText.style.opacity = '1';
+    const t = `opacity ${FLASH_FADE_MS}ms ease`;
+    labelOrdinal.style.transition = t;
+    labelOrdinal.style.opacity    = '1';
+    ctTitle.style.transition      = t;
+    ctTitle.style.opacity         = '1';
   }
 
   // ─── Barn door helpers ────────────────────────────────────
@@ -202,11 +206,9 @@
     closeDoors();
     await sleep(BARN_CLOSE_MS);
 
-    // 2. Update content (doors are closed, nothing visible)
+    // 2. Update content while doors are closed
     themeIndex = newIndex;
     renderTheme(themes[themeIndex], themeIndex);
-    // Hide ordinal on navigation — header shows "THE __ THEME IS"
-    labelOrdinal.classList.add('is-hidden');
     resetDoorsToClose();
 
     // 3. Open doors + fade header text in simultaneously
