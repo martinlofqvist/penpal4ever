@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 
 interface FormState {
@@ -98,6 +99,7 @@ export default function NewPenpalModal() {
         NEW PENPAL
       </a>
 
+      {typeof document !== 'undefined' && createPortal(
       <div
         className={`modal-overlay${isOpen ? ' is-open' : ''}`}
         role="dialog"
@@ -211,6 +213,7 @@ export default function NewPenpalModal() {
           </form>
         </div>
       </div>
+      , document.body)}
     </>
   )
 }
