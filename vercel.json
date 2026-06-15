@@ -1,4 +1,5 @@
 {
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm generate:importmap && pnpm run build"
+  "buildCommand": "pnpm generate:importmap && pnpm run build",
+  "framework": "nextjs"
 }
