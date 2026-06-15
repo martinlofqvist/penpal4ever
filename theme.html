@@ -12,8 +12,9 @@
   <!-- ─── NEW THEME intro overlay ─── -->
   <div class="intro" id="intro">
     <div class="intro__block" id="intro-block">
+      <!-- label.js keeps this in sync with #ct-label below — do not change one without the other -->
       <p class="theme-label">
-        <span>THE FIRST</span><span>THEME</span><span>IS</span>
+        <span>THE</span><span class="label-ordinal" id="intro-ordinal"></span><span>THEME</span><span>IS</span>
       </p>
       <h1 class="theme-title" id="intro-title">—</h1>
     </div>
@@ -66,15 +67,14 @@
     </div>
 
     <!-- Header overlaid on top of panels — no background -->
+    <!-- Same flex structure as .intro__block — label.js keeps label in sync -->
     <header class="ct-header">
 
-      <!-- Text spans full width, centered — matching Figma top section -->
-      <div class="ct-header__text">
-        <p class="theme-label">
-          <span>THE</span><span id="label-ordinal" class="label-ordinal"></span><span>THEME</span><span>IS</span>
-        </p>
-        <h2 class="theme-title ct-theme-title" id="ct-title">—</h2>
-      </div>
+      <!-- label.js keeps this in sync with #intro-label above — do not change one without the other -->
+      <p class="theme-label">
+        <span>THE</span><span class="label-ordinal" id="label-ordinal"></span><span>THEME</span><span>IS</span>
+      </p>
+      <h1 class="theme-title" id="ct-title">—</h1>
 
       <!-- Nav buttons float absolute over the title, matching Figma btns-2 (left:42px, top:60px) -->
       <div class="ct-header__nav">
@@ -94,6 +94,7 @@
 
   </div>
 
+  <script src="./js/label.js"></script>
   <script src="./js/theme.js"></script>
 </body>
 </html>

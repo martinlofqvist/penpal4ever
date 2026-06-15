@@ -32,14 +32,13 @@
 
   // ─── DOM refs ────────────────────────────────────────────
 
-  const intro       = document.getElementById('intro');
-  const introBlock  = document.getElementById('intro-block');
-  const introTitle  = document.getElementById('intro-title');
-  const introLabel  = intro.querySelector('.theme-label');
+  const intro      = document.getElementById('intro');
+  const introBlock = document.getElementById('intro-block');
+  const introTitle = document.getElementById('intro-title');
 
-  const ctLayout      = document.getElementById('ct-layout');
-  const ctTitle       = document.getElementById('ct-title');
-  const labelOrdinal  = document.getElementById('label-ordinal');
+  const ctLayout     = document.getElementById('ct-layout');
+  const ctTitle      = document.getElementById('ct-title');
+  const labelOrdinal = document.getElementById('label-ordinal');
 
   const barnWrap    = document.getElementById('barn-wrap');
   const doorLeft    = document.getElementById('door-left');
@@ -97,16 +96,13 @@
   function renderTheme(theme, index) {
     const ord = ordinalLabel(index);
 
-    // Intro overlay text
-    introTitle.textContent = `"${theme.title}"`;
-    if (introLabel) {
-      const spans = introLabel.querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = `THE ${ord}`;
-    }
+    // Update both labels together via label.js (single call, always in sync)
+    setThemeOrdinal(ord);
 
-    // CT header text
-    ctTitle.textContent      = `"${theme.title}"`;
-    labelOrdinal.textContent = ord;
+    // Titles
+    introTitle.textContent = `"${theme.title}"`;
+    ctTitle.textContent    = `"${theme.title}"`;
+
 
     // Names
     nameLeft.textContent  = theme.left?.name  || 'DANIEL';
@@ -233,9 +229,9 @@
   async function runIntroSequence() {
     await sleep(INTRO_HOLD_MS);
 
-    // FLIP: measure delta between intro block and ct header text
+    // FLIP: measure delta between intro block and ct header (same flex structure)
     const blockRect  = introBlock.getBoundingClientRect();
-    const headerText = ctLayout.querySelector('.ct-header__text');
+    const headerText = ctLayout.querySelector('.ct-header');
     const headerRect = headerText.getBoundingClientRect();
     const delta      = headerRect.top - blockRect.top;
     introBlock.style.setProperty('--intro-fly-offset', `translateY(${delta}px)`);

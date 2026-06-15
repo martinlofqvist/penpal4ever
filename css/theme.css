@@ -24,36 +24,29 @@ body {
 
 /* ─── Shared type ─── */
 
+/*
+  Shared label layout — identical between intro overlay and ct-header.
+  Both use 4 spans: THE | ordinal | THEME | IS.
+  Same grid, same width, same gap → FLIP animation lands pixel-perfect.
+*/
 .theme-label {
-  /* Shared type styles — layout overridden per context below */
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
+  grid-template-columns: repeat(4, 1fr);
+  width: 56vw;
+  margin: 0 auto;
   font-size: clamp(0.8rem, 1.45vw, 1.375rem);
   font-weight: 700;
   letter-spacing: -0.01em;
-  /* Figma: h-[28px] on the label element → extra 6px below text for breathing room */
-  line-height: calc(28 / 22);
+  line-height: calc(28 / 22); /* Figma: h-[28px] box on 22px text */
 }
 
 .theme-label span {
   text-align: center;
 }
 
-/* ─── Header label: 4 words (THE | ordinal | THEME | IS)
-   Constrained to ~56vw so words cluster more centrally, matching Figma proportions ─── */
-.ct-header .theme-label {
-  grid-template-columns: repeat(4, 1fr);
-  width: 56vw;
-  margin: 0 auto;
-}
-
-/* Ordinal span fades/hides during navigation */
+/* Ordinal cross-fades during navigation */
 .label-ordinal {
   transition: opacity 0.2s ease;
-}
-.label-ordinal.is-hidden {
-  opacity: 0;
 }
 
 .theme-title {
@@ -83,11 +76,10 @@ body {
 
 .intro__block {
   width: 100%;
-  padding: 0 2.8%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.1em;
+  gap: 0.5rem; /* matches .ct-header__text gap exactly */
   transition: transform 0.38s cubic-bezier(0.86, 0, 0.07, 1);
   will-change: transform;
 }
@@ -184,6 +176,11 @@ body {
   Buttons are absolute at left=42px, top=60px within the top section.
 */
 
+/*
+  .ct-header has the same flex structure as .intro__block —
+  flex-col, align-center, gap-0.5rem — so the FLIP animation
+  lands pixel-perfect and typography is identical in both states.
+*/
 .ct-header {
   position: absolute;
   top: 3.06vh;   /* 30/982 */
@@ -193,16 +190,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 0.5rem;   /* matches .intro__block exactly */
   pointer-events: none;
-}
-
-.ct-header__text {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem; /* Figma: label h-[28px] + gap-[3px] = ~11px effective visual gap */
 }
 
 /* Nav buttons: absolute, float over the title area — Figma btns-2 */
