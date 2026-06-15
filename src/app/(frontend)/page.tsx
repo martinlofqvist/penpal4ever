@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import HomeAnimation from '@/components/HomeAnimation'
 import NewPenpalModal from '@/components/NewPenpalModal'
+import ContinuePenpalModal from '@/components/ContinuePenpalModal'
 
 export const metadata: Metadata = {
   title: 'PenPal4ever',
@@ -17,7 +18,7 @@ export default function HomePage() {
         <HomeAnimation />
         <div className="home-buttons">
           <NewPenpalModal />
-          <Link href="/theme" className="btn btn--secondary">CONTINUE PENPAL</Link>
+          <ContinuePenpalModal />
         </div>
       </div>
 
@@ -29,9 +30,9 @@ export default function HomePage() {
 
       {/* Copy */}
       <main className="home-copy">
-        <p><a href="#">A place for creatives to correspond.</a></p>
-        <p><a href="#">One theme, two interpretations, an ongoing exchange.</a></p>
-        <p><a href="#">Invite your penpal and start your correspondance today.</a></p>
+        <p>A place for creatives to correspond.</p>
+        <p>One theme, two interpretations, an ongoing exchange.</p>
+        <p>Invite your penpal and start your correspondance today.</p>
       </main>
 
       {/* Footer */}

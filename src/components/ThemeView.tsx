@@ -19,12 +19,12 @@ interface Theme {
   right?: ThemeContributor
 }
 
-// ─── Timing (ms) ─────────────────────────────────────────
+// ─── Timing (ms) — halved for snappier transitions ────────
 
 const INTRO_HOLD_MS = 2000
-const INTRO_FLY_MS  = 380
-const BARN_OPEN_MS  = 1300
-const BARN_CLOSE_MS = 1300
+const INTRO_FLY_MS  = 190    // was 380
+const BARN_OPEN_MS  = 650    // was 1300
+const BARN_CLOSE_MS = 650    // was 1300
 const FLASH_FADE_MS = 200
 
 // ─── Helpers ─────────────────────────────────────────────
@@ -37,9 +37,111 @@ const ORDINALS = [
 ]
 const ordinalLabel = (n: number) => ORDINALS[n] ?? `#${n + 1}`
 
+// ─── Upload Zone ─────────────────────────────────────────
+
+interface UploadZoneProps {
+  side: 'left' | 'right'
+  themeIndex: number
+  correspondenceSlug?: string
+  onUploaded?: (imageUrl: string) => void
+}
+
+function UploadZone({ side, themeIndex, correspondenceSlug, onUploaded }: UploadZoneProps) {
+  const [isDragging, setIsDragging] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  async function uploadFile(file: File) {
+    if (!correspondenceSlug) return
+    setIsUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('side', side)
+      fd.append('themeIndex', String(themeIndex))
+      const res = await fetch(`/api/correspondences/${correspondenceSlug}/upload`, {
+        method: 'POST',
+        body: fd,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setUploadedUrl(data.imageUrl)
+      onUploaded?.(data.imageUrl)
+    } catch (err) {
+      console.error('Upload failed:', err)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) uploadFile(file)
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) uploadFile(file)
+  }
+
+  if (uploadedUrl) {
+    return <img className="contributor__image" src={uploadedUrl} alt="Uploaded submission" />
+  }
+
+  return (
+    <div
+      className={[
+        'upload-zone',
+        isDragging  ? 'is-dragging'  : '',
+        isUploading ? 'is-uploading' : '',
+        !correspondenceSlug ? 'upload-zone--disabled' : '',
+      ].filter(Boolean).join(' ')}
+      onClick={() => !isUploading && inputRef.current?.click()}
+      onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+      role="button"
+      tabIndex={0}
+      aria-label="Upload your image"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click() }}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      {isUploading ? (
+        <div className="upload-zone__spinner" aria-label="Uploading…" />
+      ) : (
+        <>
+          <svg className="upload-zone__icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 44V20M32 20L22 30M32 20L42 30" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M16 48h32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+          <p className="upload-zone__label">
+            {isDragging ? 'DROP TO UPLOAD' : 'UPLOAD YOUR WORK'}
+          </p>
+          <p className="upload-zone__sub">Click or drag &amp; drop</p>
+        </>
+      )}
+    </div>
+  )
+}
+
 // ─── Component ───────────────────────────────────────────
 
-export default function ThemeView() {
+interface ThemeViewProps {
+  correspondenceSlug?: string
+  yourName?: string
+  penpalName?: string
+}
+
+export default function ThemeView({ correspondenceSlug, yourName, penpalName }: ThemeViewProps = {}) {
   const [themes]     = useState<Theme[]>(() => shuffle(themesData.themes as Theme[]))
   const [index, setIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -49,10 +151,13 @@ export default function ThemeView() {
   const [ctVisible, setCtVisible]   = useState(false)
   const [flyOffset, setFlyOffset]   = useState('translateY(-42vh)')
 
+  // Per-slot uploaded images: keyed as `${themeIndex}-${side}`
+  const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({})
+
   // Header text opacity — fades between themes
   const [headerOpacity, setHeaderOpacity] = useState(1)
 
-  // Refs for direct DOM animation (mirrors the original JS approach)
+  // Refs for direct DOM animation
   const introBlockRef = useRef<HTMLDivElement>(null)
   const ctHeaderRef   = useRef<HTMLElement>(null)
   const doorLeftRef   = useRef<HTMLDivElement>(null)
@@ -80,12 +185,11 @@ export default function ThemeView() {
     left.classList.remove('is-closing', 'is-open')
     right.classList.remove('is-closing', 'is-open')
 
-    // Force transform without animation, then reflow
     left.style.animation  = 'none'
     right.style.animation = 'none'
     left.style.transform  = 'rotateY(-90deg)'
     right.style.transform = 'rotateY(90deg)'
-    void left.offsetWidth // trigger reflow
+    void left.offsetWidth
     left.style.animation  = ''
     right.style.animation = ''
     left.style.transform  = ''
@@ -98,7 +202,6 @@ export default function ThemeView() {
     const run = async () => {
       await sleep(INTRO_HOLD_MS)
 
-      // FLIP: measure delta from intro block centre to ct-header position
       if (introBlockRef.current && ctHeaderRef.current) {
         const blockRect  = introBlockRef.current.getBoundingClientRect()
         const headerRect = ctHeaderRef.current.getBoundingClientRect()
@@ -128,16 +231,13 @@ export default function ThemeView() {
 
     setIsAnimating(true)
 
-    // 1. Close doors + fade header
     setHeaderOpacity(0)
     closeDoors()
     await sleep(BARN_CLOSE_MS)
 
-    // 2. Update content while doors are shut
     setIndex(newIndex)
     resetDoorsToClose()
 
-    // 3. Open doors + fade header in
     setHeaderOpacity(1)
     openDoors()
     await sleep(BARN_OPEN_MS)
@@ -155,6 +255,12 @@ export default function ThemeView() {
     return () => document.removeEventListener('keydown', onKey)
   }, [navigateTo, index])
 
+  // ─── Uploaded image handler ───────────────────────────
+
+  function handleUploaded(slot: string, url: string) {
+    setUploadedImages(prev => ({ ...prev, [slot]: url }))
+  }
+
   // ─── Render ───────────────────────────────────────────
 
   const theme   = themes[index]
@@ -166,6 +272,12 @@ export default function ThemeView() {
     opacity:    headerOpacity,
     transition: `opacity ${FLASH_FADE_MS}ms ease`,
   }
+
+  const leftName  = yourName   ?? theme.left?.name  ?? 'DANIEL'
+  const rightName = penpalName ?? theme.right?.name ?? 'MARTIN'
+
+  const leftUploadKey  = `${index}-left`
+  const rightUploadKey = `${index}-right`
 
   return (
     <>
@@ -199,16 +311,21 @@ export default function ThemeView() {
 
           <div ref={doorLeftRef} className="barn-door barn-door--left">
             <div className="contributor">
-              <h3 className="contributor__name">{theme.left?.name ?? 'DANIEL'}</h3>
+              <h3 className="contributor__name">{leftName}</h3>
               <div className="contributor__frame">
-                {theme.left?.image ? (
+                {theme.left?.image || uploadedImages[leftUploadKey] ? (
                   <img
                     className="contributor__image"
-                    src={theme.left.image}
-                    alt={theme.left.caption ?? ''}
+                    src={uploadedImages[leftUploadKey] ?? theme.left?.image}
+                    alt={theme.left?.caption ?? ''}
                   />
                 ) : (
-                  <UnseenState />
+                  <UploadZone
+                    side="left"
+                    themeIndex={index}
+                    correspondenceSlug={correspondenceSlug}
+                    onUploaded={(url) => handleUploaded(leftUploadKey, url)}
+                  />
                 )}
               </div>
               <p className="contributor__caption">{theme.left?.caption ?? ''}</p>
@@ -217,16 +334,21 @@ export default function ThemeView() {
 
           <div ref={doorRightRef} className="barn-door barn-door--right">
             <div className="contributor">
-              <h3 className="contributor__name">{theme.right?.name ?? 'MARTIN'}</h3>
+              <h3 className="contributor__name">{rightName}</h3>
               <div className="contributor__frame">
-                {theme.right?.image ? (
+                {theme.right?.image || uploadedImages[rightUploadKey] ? (
                   <img
                     className="contributor__image"
-                    src={theme.right.image}
-                    alt={theme.right.caption ?? ''}
+                    src={uploadedImages[rightUploadKey] ?? theme.right?.image}
+                    alt={theme.right?.caption ?? ''}
                   />
                 ) : (
-                  <UnseenState />
+                  <UploadZone
+                    side="right"
+                    themeIndex={index}
+                    correspondenceSlug={correspondenceSlug}
+                    onUploaded={(url) => handleUploaded(rightUploadKey, url)}
+                  />
                 )}
               </div>
               <p className="contributor__caption">{theme.right?.caption ?? ''}</p>
@@ -273,21 +395,5 @@ export default function ThemeView() {
 
       </div>
     </>
-  )
-}
-
-// ─── Unseen state icon ────────────────────────────────────
-
-function UnseenState() {
-  return (
-    <div className="unseen-state">
-      <svg className="unseen-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 2L46 46" stroke="#9a9a9a" strokeWidth="2" strokeLinecap="round" />
-        <path d="M8.5 13.5C5.2 16.3 3 19.5 2 22c3.8 9.4 12.4 16 22 16 3.5 0 6.8-.8 9.7-2.3" stroke="#9a9a9a" strokeWidth="2" strokeLinecap="round" />
-        <path d="M39.5 34.5C42.8 31.7 45 28.5 46 26c-3.8-9.4-12.4-16-22-16-3.5 0-6.8.8-9.7 2.3" stroke="#9a9a9a" strokeWidth="2" strokeLinecap="round" />
-        <path d="M17.5 17.5A9 9 0 0 0 15 24a9 9 0 0 0 9 9 9 9 0 0 0 6.5-2.5" stroke="#9a9a9a" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-      <p className="unseen-label">HAS NOT YET SEEN THIS THEME</p>
-    </div>
   )
 }

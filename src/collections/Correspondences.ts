@@ -4,6 +4,12 @@ export const Correspondences: CollectionConfig = {
   slug: 'correspondences',
   admin: {
     useAsTitle: 'slug',
+    defaultColumns: ['slug', 'yourFirstName', 'penpalFirstName', 'createdAt'],
+  },
+  access: {
+    create: () => true,
+    read:   () => true,
+    update: () => true,
   },
   fields: [
     {
@@ -11,38 +17,19 @@ export const Correspondences: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
-      admin: {
-        description: 'Permanent URL identifier for this correspondence',
-      },
+      admin: { description: 'Unique URL identifier for this correspondence' },
     },
-    {
-      name: 'penpalA',
-      type: 'relationship',
-      relationTo: 'users',
-      required: true,
-    },
-    {
-      name: 'penpalB',
-      type: 'relationship',
-      relationTo: 'users',
-      required: true,
-    },
-    {
-      name: 'status',
-      type: 'select',
-      required: true,
-      defaultValue: 'active',
-      options: [
-        { label: 'Active', value: 'active' },
-        { label: 'Ended', value: 'ended' },
-      ],
-    },
-    {
-      name: 'endedAt',
-      type: 'date',
-      admin: {
-        condition: (data) => data.status === 'ended',
-      },
-    },
+    // ─── Your details ───────────────────────────────────
+    { name: 'yourFirstName', type: 'text',  required: true },
+    { name: 'yourLastName',  type: 'text',  required: true },
+    { name: 'yourEmail',     type: 'email', required: true },
+    // ─── Penpal details ──────────────────────────────────
+    { name: 'penpalFirstName', type: 'text',  required: true },
+    { name: 'penpalLastName',  type: 'text',  required: true },
+    { name: 'penpalEmail',     type: 'email', required: true },
+    // ─── Settings ────────────────────────────────────────
+    { name: 'limitThemes',       type: 'checkbox', defaultValue: false },
+    { name: 'maxThemes',         type: 'number' },
+    { name: 'currentThemeIndex', type: 'number', defaultValue: 0 },
   ],
 }
