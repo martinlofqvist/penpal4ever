@@ -58,10 +58,10 @@ export default function NewPenpalModal() {
     e.preventDefault()
     setError('')
 
-    const { yourFirstName, penpalFirstName, maxThemes } = form
+    const { yourFirstName, maxThemes } = form
 
-    if (!yourFirstName || !penpalFirstName) {
-      setError('Please enter both first names.')
+    if (!yourFirstName) {
+      setError('Please enter your first name.')
       return
     }
 
@@ -154,7 +154,7 @@ export default function NewPenpalModal() {
                 <div className="form-group">
                   <label className="form-label" htmlFor="inp-pal-first">First name</label>
                   <input className="form-input" id="inp-pal-first" type="text"
-                    placeholder="Daniel" autoComplete="off" required
+                    placeholder="Daniel" autoComplete="off"
                     value={form.penpalFirstName} onChange={set('penpalFirstName')} />
                 </div>
                 <div className="form-group">
