@@ -18,9 +18,8 @@ export async function POST(req: NextRequest) {
       limitThemes, maxThemes,
     } = body
 
-    if (!yourFirstName || !yourLastName || !yourEmail ||
-        !penpalFirstName || !penpalLastName || !penpalEmail) {
-      return NextResponse.json({ error: 'All name and email fields are required' }, { status: 400 })
+    if (!yourFirstName || !penpalFirstName) {
+      return NextResponse.json({ error: 'First names are required' }, { status: 400 })
     }
 
     // Pick a random starting theme from the themes table

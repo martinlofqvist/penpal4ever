@@ -21,12 +21,12 @@ export const Correspondences: CollectionConfig = {
     },
     // ─── Your details ───────────────────────────────────
     { name: 'yourFirstName', type: 'text',  required: true },
-    { name: 'yourLastName',  type: 'text',  required: true },
-    { name: 'yourEmail',     type: 'email', required: true },
+    { name: 'yourLastName',  type: 'text',  required: false },
+    { name: 'yourEmail',     type: 'email', required: false },
     // ─── Penpal details ──────────────────────────────────
     { name: 'penpalFirstName', type: 'text',  required: true },
-    { name: 'penpalLastName',  type: 'text',  required: true },
-    { name: 'penpalEmail',     type: 'email', required: true },
+    { name: 'penpalLastName',  type: 'text',  required: false },
+    { name: 'penpalEmail',     type: 'email', required: false },
     // ─── Settings ────────────────────────────────────────
     { name: 'limitThemes',       type: 'checkbox', defaultValue: false },
     { name: 'maxThemes',         type: 'number' },

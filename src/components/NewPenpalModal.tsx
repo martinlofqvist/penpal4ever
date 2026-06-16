@@ -131,14 +131,14 @@ export default function NewPenpalModal() {
                     value={form.yourFirstName} onChange={set('yourFirstName')} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label" htmlFor="inp-your-last">Last name</label>
+                  <label className="form-label" htmlFor="inp-your-last">Last name <span className="form-optional">(optional)</span></label>
                   <input className="form-input" id="inp-your-last" type="text"
                     placeholder="Löfqvist" autoComplete="family-name"
                     value={form.yourLastName} onChange={set('yourLastName')} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="inp-your-email">Email</label>
+                <label className="form-label" htmlFor="inp-your-email">Email <span className="form-optional">(optional)</span></label>
                 <input className="form-input" id="inp-your-email" type="email"
                   placeholder="you@example.com" autoComplete="email"
                   value={form.yourEmail} onChange={set('yourEmail')} />
@@ -158,14 +158,14 @@ export default function NewPenpalModal() {
                     value={form.penpalFirstName} onChange={set('penpalFirstName')} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label" htmlFor="inp-pal-last">Last name</label>
+                  <label className="form-label" htmlFor="inp-pal-last">Last name <span className="form-optional">(optional)</span></label>
                   <input className="form-input" id="inp-pal-last" type="text"
                     placeholder="Smith" autoComplete="off"
                     value={form.penpalLastName} onChange={set('penpalLastName')} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="inp-pal-email">Email</label>
+                <label className="form-label" htmlFor="inp-pal-email">Email <span className="form-optional">(optional)</span></label>
                 <input className="form-input" id="inp-pal-email" type="email"
                   placeholder="penpal@example.com" autoComplete="off"
                   value={form.penpalEmail} onChange={set('penpalEmail')} />

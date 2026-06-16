@@ -7,7 +7,10 @@ export const Themes: CollectionConfig = {
     defaultColumns: ['id', 'title'],
   },
   access: {
-    read: () => true,
+    read:   () => true,
+    create: () => true,
+    update: () => true,
+    delete: () => true,
   },
   fields: [
     {
