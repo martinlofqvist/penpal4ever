@@ -47,6 +47,16 @@ A user can participate in several correspondences simultaneously. Each has its o
 
 ---
 
+## Tonality reference
+
+The following copy was written for the homepage and should serve as a reference for the voice and tone of the project — understated, precise, warm without being sentimental:
+
+> A visual conversation between two friends, built around a shared theme.
+> A new theme arrives when both of you have responded to the last one. You respond with an image. So do they. No explanations, no scores, no feed to scroll past it.
+> Just a structure for staying creative with someone you care about, one image at a time.
+
+---
+
 ## The long game
 
 The archive grows one theme at a time. Eventually the full list becomes its own thing — a record of how two people see differently, theme after theme, over years.

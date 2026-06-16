@@ -30,9 +30,9 @@ export default function HomePage() {
 
       {/* Copy */}
       <main className="home-copy">
-        <p>A place for creatives to correspond.</p>
-        <p>One theme, two interpretations, an ongoing exchange.</p>
-        <p>Invite your penpal and start your correspondance today.</p>
+        <p>A visual conversation between two friends, built around a shared theme.</p>
+        <p>A new theme arrives when both of you have responded to the last one. You respond with an image. So do they. No explanations, no scores, no feed to scroll past it.</p>
+        <p>Just a structure for staying creative with someone you care about, one image at a time.</p>
       </main>
 
       {/* Footer */}
