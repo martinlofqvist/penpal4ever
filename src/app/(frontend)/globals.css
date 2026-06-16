@@ -322,11 +322,13 @@ html, body {
   position: relative;
   border-radius: 16px;
   box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.08);
-  transform: translateY(16px) scale(0.97);
-  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 
 .modal-overlay.is-open .modal {
+  opacity: 1;
   transform: translateY(0) scale(1);
 }
 
@@ -356,59 +358,26 @@ html, body {
   background: #e0e0e0;
 }
 
-/* Featured icon */
-.modal__icon-area {
-  display: flex;
-  justify-content: center;
-  padding: 2.25rem 2rem 0;
-}
-
-.modal__icon-badge {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 12px;
-  border: 1.5px solid #e8e8e8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
-  color: var(--color-black);
-}
-
 /* Intro */
 .modal__intro {
-  padding: 1.25rem 2rem 0;
+  padding: 2.25rem 2rem 0;
   text-align: center;
 }
 
 .modal__title {
   font-family: var(--font-primary);
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
   font-weight: 700;
-  letter-spacing: -0.01em;
-  margin-bottom: 0.4em;
-}
-
-.modal__subtitle {
-  font-family: 'Swiss 721 Extended', Arial, sans-serif;
-  font-size: clamp(0.75rem, 1vw, 0.875rem);
-  font-weight: 400;
-  color: #777;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.04em;
+  margin-bottom: 0;
 }
 
 /* Body */
 .modal__body {
-  padding: 1.5rem 2rem;
+  padding: 1.75rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0;
-}
-
-.modal__rule {
-  height: 1px;
-  background: #ebebeb;
-  margin: 1.25rem 0;
+  gap: 1.75rem;
 }
 
 /* Section */
@@ -422,22 +391,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 0.25rem;
-}
-
-.modal__step-badge {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: var(--color-black);
-  color: var(--color-white);
-  font-family: var(--font-primary);
-  font-size: 0.5rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  margin-bottom: 0.1rem;
 }
 
 .modal__section-label {
@@ -481,14 +435,14 @@ html, body {
   padding: 0.65em 0.85em;
   border: 1.5px solid #d8d8d8;
   border-radius: 8px;
-  font-family: var(--font-primary);
-  font-size: clamp(0.7rem, 1vw, 0.8rem);
-  font-weight: 700;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
   color: var(--color-black);
   background: var(--color-white);
   outline: none;
   transition: border-color 0.15s ease;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .form-input:focus {
@@ -522,48 +476,80 @@ html, body {
   display: block;
 }
 
-/* Checkbox */
-.form-check {
+/* Themes slider */
+.themes-slider-group {
+  gap: 0.5rem !important;
+}
+
+.themes-slider-head {
   display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.form-check input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--color-black);
-  margin-top: 0.1em;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.form-check-label {
+.themes-slider-value {
   font-family: var(--font-primary);
-  font-size: clamp(0.6rem, 0.85vw, 0.7rem);
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
   color: var(--color-black);
+  letter-spacing: -0.03em;
+  min-width: 2rem;
+  text-align: right;
+}
+
+.form-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: #d8d8d8;
+  border-radius: 9999px;
+  outline: none;
   cursor: pointer;
-  line-height: 1.4;
+  accent-color: var(--color-black);
 }
 
-.form-conditional {
-  display: none;
-  margin-top: 0.5rem;
-  padding-left: 1.65rem;
+.form-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-black);
+  cursor: pointer;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 0 0 1.5px var(--color-black);
+  transition: transform 0.15s ease;
 }
 
-.form-conditional.is-visible {
-  display: block;
+.form-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.form-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-black);
+  cursor: pointer;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 0 0 1.5px var(--color-black);
+}
+
+.themes-slider-hint {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #999;
+  margin: 0;
 }
 
 /* Footer */
 .modal__footer {
-  padding: 0 2rem 2rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  margin-top: 0.25rem;
 }
 
 .modal__actions {

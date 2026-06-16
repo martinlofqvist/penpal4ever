@@ -11,14 +11,13 @@ interface FormState {
   penpalFirstName: string
   penpalLastName: string
   penpalEmail: string
-  limitThemes: boolean
-  maxThemes: string
+  maxThemes: number
 }
 
 const EMPTY: FormState = {
   yourFirstName: '', yourLastName: '', yourEmail: '',
   penpalFirstName: '', penpalLastName: '', penpalEmail: '',
-  limitThemes: false, maxThemes: '10',
+  maxThemes: 6,
 }
 
 export default function NewPenpalModal() {
@@ -52,25 +51,21 @@ export default function NewPenpalModal() {
 
   function set(field: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm(prev => ({
-        ...prev,
-        [field]: field === 'limitThemes' ? (e.target as HTMLInputElement).checked : e.target.value,
-      }))
+      setForm(prev => ({ ...prev, [field]: e.target.value }))
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
 
-    const { yourFirstName, yourLastName, yourEmail,
-            penpalFirstName, penpalLastName, penpalEmail,
-            limitThemes, maxThemes } = form
+    const { yourFirstName, penpalFirstName, maxThemes } = form
 
-    if (!yourFirstName || !yourLastName || !yourEmail ||
-        !penpalFirstName || !penpalLastName || !penpalEmail) {
-      setError('Please fill in all fields.')
+    if (!yourFirstName || !penpalFirstName) {
+      setError('Please enter both first names.')
       return
     }
+
+    const isInfinite = maxThemes === 11
 
     setLoading(true)
     try {
@@ -78,9 +73,14 @@ export default function NewPenpalModal() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          yourFirstName, yourLastName, yourEmail,
-          penpalFirstName, penpalLastName, penpalEmail,
-          limitThemes, maxThemes: limitThemes ? maxThemes : null,
+          yourFirstName: form.yourFirstName,
+          yourLastName: form.yourLastName,
+          yourEmail: form.yourEmail,
+          penpalFirstName: form.penpalFirstName,
+          penpalLastName: form.penpalLastName,
+          penpalEmail: form.penpalEmail,
+          limitThemes: !isInfinite,
+          maxThemes: isInfinite ? null : String(maxThemes),
         }),
       })
       const data = await res.json()
@@ -93,10 +93,12 @@ export default function NewPenpalModal() {
     }
   }
 
+  const themesLabel = form.maxThemes === 11 ? '∞' : String(form.maxThemes)
+
   return (
     <>
       <a href="#" className="btn btn--primary" onClick={openModal}>
-        NEW PENPAL
+        START A VISUAL CORRESPONDENCE
       </a>
 
       {typeof document !== 'undefined' && createPortal(
@@ -110,14 +112,8 @@ export default function NewPenpalModal() {
         <div className="modal">
           <button className="modal__close" onClick={closeModal} aria-label="Close">✕</button>
 
-          {/* Icon badge */}
-          <div className="modal__icon-area">
-            <div className="modal__icon-badge">✉</div>
-          </div>
-
           <div className="modal__intro">
-            <h2 className="modal__title" id="modal-title">NEW PENPAL</h2>
-            <p className="modal__subtitle">Start a visual correspondence</p>
+            <h2 className="modal__title" id="modal-title">START A VISUAL CORRESPONDENCE</h2>
           </div>
 
           <form className="modal__body" onSubmit={handleSubmit} noValidate>
@@ -125,7 +121,6 @@ export default function NewPenpalModal() {
             {/* Section 1 — You */}
             <div className="modal__section">
               <div className="modal__section-head">
-                <span className="modal__step-badge">01</span>
                 <span className="modal__section-label">YOUR DETAILS</span>
               </div>
               <div className="form-row">
@@ -138,24 +133,21 @@ export default function NewPenpalModal() {
                 <div className="form-group">
                   <label className="form-label" htmlFor="inp-your-last">Last name</label>
                   <input className="form-input" id="inp-your-last" type="text"
-                    placeholder="Löfqvist" autoComplete="family-name" required
+                    placeholder="Löfqvist" autoComplete="family-name"
                     value={form.yourLastName} onChange={set('yourLastName')} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label" htmlFor="inp-your-email">Email</label>
                 <input className="form-input" id="inp-your-email" type="email"
-                  placeholder="you@example.com" autoComplete="email" required
+                  placeholder="you@example.com" autoComplete="email"
                   value={form.yourEmail} onChange={set('yourEmail')} />
               </div>
             </div>
 
-            <hr className="modal__rule" />
-
             {/* Section 2 — Penpal */}
             <div className="modal__section">
               <div className="modal__section-head">
-                <span className="modal__step-badge">02</span>
                 <span className="modal__section-label">YOUR PENPAL</span>
               </div>
               <div className="form-row">
@@ -168,34 +160,40 @@ export default function NewPenpalModal() {
                 <div className="form-group">
                   <label className="form-label" htmlFor="inp-pal-last">Last name</label>
                   <input className="form-input" id="inp-pal-last" type="text"
-                    placeholder="Smith" autoComplete="off" required
+                    placeholder="Smith" autoComplete="off"
                     value={form.penpalLastName} onChange={set('penpalLastName')} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label" htmlFor="inp-pal-email">Email</label>
                 <input className="form-input" id="inp-pal-email" type="email"
-                  placeholder="penpal@example.com" autoComplete="off" required
+                  placeholder="penpal@example.com" autoComplete="off"
                   value={form.penpalEmail} onChange={set('penpalEmail')} />
               </div>
             </div>
 
-            {/* Limit themes checkbox */}
-            <label className="form-check">
-              <input type="checkbox" checked={form.limitThemes} onChange={set('limitThemes')} />
-              <span className="form-check-label">Limit this correspondence to a set number of themes</span>
-            </label>
-
-            {form.limitThemes && (
-              <div className="form-conditional">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="inp-max-themes">Max themes</label>
-                  <input className="form-input" id="inp-max-themes" type="number"
-                    min="1" max="99" placeholder="10"
-                    value={form.maxThemes} onChange={set('maxThemes')} />
-                </div>
+            {/* Themes slider */}
+            <div className="form-group themes-slider-group">
+              <div className="themes-slider-head">
+                <label className="form-label" htmlFor="inp-themes-slider">THEMES</label>
+                <span className="themes-slider-value">{themesLabel}</span>
               </div>
-            )}
+              <input
+                className="form-slider"
+                id="inp-themes-slider"
+                type="range"
+                min={1}
+                max={11}
+                step={1}
+                value={form.maxThemes}
+                onChange={(e) => setForm(prev => ({ ...prev, maxThemes: Number(e.target.value) }))}
+              />
+              <p className="themes-slider-hint">
+                {form.maxThemes === 11
+                  ? 'No limit — the correspondence goes on indefinitely'
+                  : `Ends after ${form.maxThemes} theme${form.maxThemes === 1 ? '' : 's'}`}
+              </p>
+            </div>
 
             {/* Footer */}
             <div className="modal__footer">
