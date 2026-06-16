@@ -98,7 +98,7 @@ export default function NewPenpalModal() {
   return (
     <>
       <a href="#" className="btn btn--primary" onClick={openModal}>
-        START A VISUAL CORRESPONDENCE
+        NEW PENPAL
       </a>
 
       {typeof document !== 'undefined' && createPortal(
