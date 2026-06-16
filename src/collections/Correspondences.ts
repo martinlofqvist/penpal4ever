@@ -31,13 +31,12 @@ export const Correspondences: CollectionConfig = {
     { name: 'limitThemes',       type: 'checkbox', defaultValue: false },
     { name: 'maxThemes',         type: 'number' },
     { name: 'currentThemeIndex', type: 'number', defaultValue: 0 },
-    // ─── Theme ───────────────────────────────────────────
+    // ─── Theme order ─────────────────────────────────────
     {
-      name: 'theme',
-      type: 'relationship',
-      relationTo: 'themes',
+      name: 'themeOrder',
+      type: 'json',
       required: false,
-      admin: { description: 'The active theme for this correspondence' },
+      admin: { description: 'Fixed ordered array of theme IDs for this correspondence (set on creation, never changes)' },
     },
   ],
 }

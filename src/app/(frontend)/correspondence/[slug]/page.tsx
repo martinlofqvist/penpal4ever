@@ -28,12 +28,15 @@ export default async function CorrespondencePage({ params }: Props) {
 
   const c = docs[0]
 
+  const themeOrder = Array.isArray(c.themeOrder) ? (c.themeOrder as number[]) : undefined
+
   return (
     <div className="theme-page">
       <ThemeView
         correspondenceSlug={slug}
         yourName={c.yourFirstName.toUpperCase()}
         penpalName={c.penpalFirstName.toUpperCase()}
+        themeOrder={themeOrder}
       />
     </div>
   )

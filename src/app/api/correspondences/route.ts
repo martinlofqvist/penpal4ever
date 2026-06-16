@@ -22,18 +22,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'First names are required' }, { status: 400 })
     }
 
-    // Pick a random starting theme from the themes table
-    const { totalDocs } = await payload.find({ collection: 'themes', limit: 0 })
-    let themeId: number | undefined
-    if (totalDocs > 0) {
-      const randomPage = Math.floor(Math.random() * totalDocs) + 1
-      const { docs: themesDocs } = await payload.find({
-        collection: 'themes',
-        limit: 1,
-        page: randomPage,
-      })
-      themeId = Number(themesDocs[0]?.id)
+    // Fetch all themes and build a shuffled order (persisted so both parties see the same sequence)
+    const { docs: allThemes } = await payload.find({ collection: 'themes', limit: 1000, sort: 'id' })
+    const ids = allThemes.map((t) => Number(t.id))
+    // Fisher-Yates shuffle
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[ids[i], ids[j]] = [ids[j], ids[i]]
     }
+    const themeOrder = ids
 
     const slug = generateSlug()
 
@@ -50,7 +47,7 @@ export async function POST(req: NextRequest) {
         limitThemes:     !!limitThemes,
         maxThemes:       limitThemes ? (parseInt(maxThemes, 10) || null) : null,
         currentThemeIndex: 0,
-        ...(themeId !== undefined && { theme: themeId }),
+        themeOrder,
       },
     })
 

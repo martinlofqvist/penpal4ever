@@ -1,7 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { shuffle } from '@/lib/utils'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import themesData from '@/data/themes.json'
 
 // ─── Types ────────────────────────────────────────────────
@@ -139,10 +138,24 @@ interface ThemeViewProps {
   correspondenceSlug?: string
   yourName?: string
   penpalName?: string
+  /** Fixed ordered list of theme IDs from the DB. Falls back to source order if not provided. */
+  themeOrder?: number[]
 }
 
-export default function ThemeView({ correspondenceSlug, yourName, penpalName }: ThemeViewProps = {}) {
-  const [themes]     = useState<Theme[]>(() => shuffle(themesData.themes as Theme[]))
+export default function ThemeView({ correspondenceSlug, yourName, penpalName, themeOrder }: ThemeViewProps = {}) {
+  const themeById = useMemo(() => {
+    const map = new Map<number, Theme>()
+    for (const t of themesData.themes as Theme[]) map.set(t.id, t)
+    return map
+  }, [])
+
+  const themes = useMemo<Theme[]>(() => {
+    if (themeOrder && themeOrder.length > 0) {
+      return themeOrder.map((id) => themeById.get(id)).filter(Boolean) as Theme[]
+    }
+    return themesData.themes as Theme[]
+  }, [themeOrder, themeById])
+
   const [index, setIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
 
