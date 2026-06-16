@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         limit: 1,
         page: randomPage,
       })
-      themeId = themesDocs[0]?.id
+      themeId = Number(themesDocs[0]?.id)
     }
 
     const slug = generateSlug()
