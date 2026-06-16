@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Correspondences } from './collections/Correspondences'
 import { Responses } from './collections/Responses'
+import { Themes } from './collections/Themes'
 import { Settings } from './globals/Settings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -25,6 +26,7 @@ export default buildConfig({
     Media,
     Correspondences,
     Responses,
+    Themes,
   ],
   globals: [
     Settings,

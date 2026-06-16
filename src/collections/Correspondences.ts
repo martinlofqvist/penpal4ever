@@ -31,5 +31,13 @@ export const Correspondences: CollectionConfig = {
     { name: 'limitThemes',       type: 'checkbox', defaultValue: false },
     { name: 'maxThemes',         type: 'number' },
     { name: 'currentThemeIndex', type: 'number', defaultValue: 0 },
+    // ─── Theme ───────────────────────────────────────────
+    {
+      name: 'theme',
+      type: 'relationship',
+      relationTo: 'themes',
+      required: false,
+      admin: { description: 'The active theme for this correspondence' },
+    },
   ],
 }

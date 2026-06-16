@@ -23,6 +23,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'All name and email fields are required' }, { status: 400 })
     }
 
+    // Pick a random starting theme from the themes table
+    const { totalDocs } = await payload.find({ collection: 'themes', limit: 0 })
+    let themeId: number | undefined
+    if (totalDocs > 0) {
+      const randomPage = Math.floor(Math.random() * totalDocs) + 1
+      const { docs: themesDocs } = await payload.find({
+        collection: 'themes',
+        limit: 1,
+        page: randomPage,
+      })
+      themeId = themesDocs[0]?.id
+    }
+
     const slug = generateSlug()
 
     const doc = await payload.create({
@@ -38,6 +51,7 @@ export async function POST(req: NextRequest) {
         limitThemes:     !!limitThemes,
         maxThemes:       limitThemes ? (parseInt(maxThemes, 10) || null) : null,
         currentThemeIndex: 0,
+        ...(themeId !== undefined && { theme: themeId }),
       },
     })
 

@@ -14,7 +14,8 @@
     "lint": "next lint",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
-    "server": "node server.js"
+    "server": "node server.js",
+    "seed:themes": "tsx --env-file=.env src/scripts/seed-themes.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.84.1",
