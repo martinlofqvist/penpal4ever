@@ -20,7 +20,7 @@
     "@payloadcms/db-postgres": "3.85.1",
     "@payloadcms/next": "3.85.1",
     "@payloadcms/richtext-lexical": "3.85.1",
-    "@payloadcms/storage-vercel-blob": "3.85.1",
+    "@payloadcms/storage-vercel-blob": "3.84.1",
     "@payloadcms/translations": "3.85.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
