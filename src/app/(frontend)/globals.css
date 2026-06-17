@@ -171,7 +171,7 @@ html, body {
   left: 5.5%;
   top: 30.2%;
   width: 42.1%;
-  padding-right: 4%;
+  padding-right: 9%;
   font-family: 'Swiss 721 Extended', 'Arial Nova', 'Helvetica Neue', Arial, sans-serif;
   font-size: clamp(1rem, 1.85vw, 1.75rem);
   font-weight: 400;
@@ -222,7 +222,7 @@ html, body {
   padding: 0.85em 2em;
   cursor: pointer;
   transition: opacity 150ms ease;
-  width: clamp(14rem, 25.5vw, 24rem);
+  width: auto;
   text-align: center;
   white-space: nowrap;
 }
@@ -266,12 +266,15 @@ html, body {
 }
 
 .about-body {
-  font-size: clamp(1.5rem, 3.2vw, 3rem);
-  font-weight: 700;
+  font-family: 'Swiss 721 Extended', 'Arial Nova', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(1rem, 1.85vw, 1.75rem);
+  font-weight: 400;
   line-height: 1.33;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  max-width: 74%;
+  letter-spacing: 0;
+  max-width: 56%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.33em;
 }
 
 .about-back {
