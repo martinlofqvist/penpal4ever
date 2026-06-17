@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
       limitThemes, maxThemes,
     } = body
 
-    if (!yourFirstName || !penpalFirstName) {
-      return NextResponse.json({ error: 'First names are required' }, { status: 400 })
+    if (!yourFirstName) {
+      return NextResponse.json({ error: 'Your first name is required' }, { status: 400 })
     }
 
     // Fetch all themes and build a shuffled order (persisted so both parties see the same sequence)
@@ -38,12 +38,12 @@ export async function POST(req: NextRequest) {
       collection: 'correspondences',
       data: {
         slug,
-        yourFirstName: yourFirstName.trim(),
-        yourLastName:  yourLastName.trim(),
-        yourEmail:     yourEmail.trim().toLowerCase(),
-        penpalFirstName: penpalFirstName.trim(),
-        penpalLastName:  penpalLastName.trim(),
-        penpalEmail:     penpalEmail.trim().toLowerCase(),
+        yourFirstName:   yourFirstName.trim(),
+        yourLastName:    (yourLastName ?? '').trim(),
+        yourEmail:       (yourEmail ?? '').trim().toLowerCase(),
+        penpalFirstName: '',
+        penpalLastName:  '',
+        penpalEmail:     '',
         limitThemes:     !!limitThemes,
         maxThemes:       limitThemes ? (parseInt(maxThemes, 10) || null) : null,
         currentThemeIndex: 0,

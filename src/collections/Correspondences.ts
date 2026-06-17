@@ -24,7 +24,7 @@ export const Correspondences: CollectionConfig = {
     { name: 'yourLastName',  type: 'text',  required: false },
     { name: 'yourEmail',     type: 'email', required: false },
     // ─── Penpal details ──────────────────────────────────
-    { name: 'penpalFirstName', type: 'text',  required: true },
+    { name: 'penpalFirstName', type: 'text',  required: false },
     { name: 'penpalLastName',  type: 'text',  required: false },
     { name: 'penpalEmail',     type: 'email', required: false },
     // ─── Settings ────────────────────────────────────────

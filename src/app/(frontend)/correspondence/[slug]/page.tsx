@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import ThemeView from '@/components/ThemeView'
+import PenpalOnboardingModal from '@/components/PenpalOnboardingModal'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -29,14 +30,16 @@ export default async function CorrespondencePage({ params }: Props) {
   const c = docs[0]
 
   const themeOrder = Array.isArray(c.themeOrder) ? (c.themeOrder as number[]) : undefined
+  const needsPenpal = !c.penpalFirstName
 
   return (
     <div className="theme-page">
       <ThemeView
         correspondenceSlug={slug}
         yourName={c.yourFirstName.toUpperCase()}
-        penpalName={c.penpalFirstName.toUpperCase()}
+        penpalName={c.penpalFirstName ? c.penpalFirstName.toUpperCase() : '…'}
         themeOrder={themeOrder}
+        needsPenpal={needsPenpal}
       />
     </div>
   )

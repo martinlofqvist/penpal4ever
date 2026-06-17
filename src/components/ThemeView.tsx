@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import themesData from '@/data/themes.json'
+import PenpalOnboardingModal from '@/components/PenpalOnboardingModal'
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -140,9 +141,11 @@ interface ThemeViewProps {
   penpalName?: string
   /** Fixed ordered list of theme IDs from the DB. Falls back to source order if not provided. */
   themeOrder?: number[]
+  /** If true, show the penpal onboarding modal on first load */
+  needsPenpal?: boolean
 }
 
-export default function ThemeView({ correspondenceSlug, yourName, penpalName, themeOrder }: ThemeViewProps = {}) {
+export default function ThemeView({ correspondenceSlug, yourName, penpalName: penpalNameProp, themeOrder, needsPenpal = false }: ThemeViewProps = {}) {
   const themeById = useMemo(() => {
     const map = new Map<number, Theme>()
     for (const t of themesData.themes as Theme[]) map.set(t.id, t)
@@ -155,6 +158,9 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName, th
     }
     return themesData.themes as Theme[]
   }, [themeOrder, themeById])
+
+  const [penpalName, setPenpalName] = useState(penpalNameProp ?? '')
+  const [showOnboarding, setShowOnboarding] = useState(needsPenpal)
 
   const [index, setIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -286,14 +292,26 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName, th
     transition: `opacity ${FLASH_FADE_MS}ms ease`,
   }
 
-  const leftName  = yourName   ?? theme.left?.name  ?? 'DANIEL'
-  const rightName = penpalName ?? theme.right?.name ?? 'MARTIN'
+  const leftName  = yourName  ?? theme.left?.name  ?? 'DANIEL'
+  const rightName = penpalName || theme.right?.name || 'PENPAL'
 
   const leftUploadKey  = `${index}-left`
   const rightUploadKey = `${index}-right`
 
   return (
     <>
+      {/* ─── Penpal onboarding ─── */}
+      {showOnboarding && correspondenceSlug && (
+        <PenpalOnboardingModal
+          correspondenceSlug={correspondenceSlug}
+          yourName={yourName ?? ''}
+          onComplete={(name) => {
+            setPenpalName(name.toUpperCase())
+            setShowOnboarding(false)
+          }}
+        />
+      )}
+
       {/* ─── Intro overlay ─── */}
       {introPhase !== 'done' && (
         <div className={[

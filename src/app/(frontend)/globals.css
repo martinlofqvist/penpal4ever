@@ -318,6 +318,54 @@ html, body {
   pointer-events: auto;
 }
 
+/* Card flip wrapper */
+.modal-flip {
+  width: min(600px, 92vw);
+  perspective: 1200px;
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.modal-overlay.is-open .modal-flip {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.modal-flip__inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-flip__inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.modal-flip__face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.modal-flip__face--front {
+  background: var(--color-white);
+  position: relative;
+}
+
+.modal-flip__face--back {
+  background: var(--color-white);
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 2.25rem 2rem 2rem;
+  gap: 0;
+}
+
+/* Legacy .modal used by ContinuePenpalModal etc. */
 .modal {
   background: var(--color-white);
   width: min(600px, 92vw);
@@ -335,6 +383,145 @@ html, body {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
+
+/* ─── Share back face ─── */
+
+.share-back__title {
+  font-family: var(--font-primary);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #777;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.share-back__url {
+  font-family: var(--font-primary);
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  word-break: break-all;
+  color: var(--color-black);
+  margin-bottom: 1rem;
+}
+
+.share-back__copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-primary);
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.75em 1.5em;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 1.5px solid var(--color-black);
+  transition: opacity 0.15s ease;
+  align-self: flex-start;
+  margin-bottom: 2rem;
+}
+
+.share-back__copy-btn:hover { opacity: 0.8; }
+.share-back__copy-btn.is-copied {
+  background: #1a8a44;
+  border-color: #1a8a44;
+}
+
+.share-back__divider {
+  width: 100%;
+  height: 1px;
+  background: #e8e8e8;
+  margin-bottom: 1.5rem;
+}
+
+.share-back__invite-label {
+  font-family: var(--font-primary);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #777;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.share-back__invite-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.share-back__invite-input {
+  flex: 1;
+  padding: 0.65em 0.85em;
+  border: 1.5px solid #d8d8d8;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  color: var(--color-black);
+  background: var(--color-white);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.share-back__invite-input:focus {
+  border-color: var(--color-black);
+}
+
+.share-back__invite-input::placeholder { color: #bbb; }
+
+.share-back__invite-btn {
+  font-family: var(--font-primary);
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.75em 1.5em;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 1.5px solid var(--color-black);
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.share-back__invite-btn:hover { opacity: 0.8; }
+.share-back__invite-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.share-back__invite-btn.is-sent {
+  background: #1a8a44;
+  border-color: #1a8a44;
+}
+
+.share-back__invite-hint {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+.share-back__done-btn {
+  margin-top: auto;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-primary);
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.75em 1.5em;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: var(--color-white);
+  color: var(--color-black);
+  border: 1.5px solid #d8d8d8;
+  transition: border-color 0.15s ease;
+  margin-top: 2rem;
+}
+
+.share-back__done-btn:hover { border-color: var(--color-black); }
 
 /* Close button */
 .modal__close {
