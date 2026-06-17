@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import HomeAnimation from '@/components/HomeAnimation'
-import NewPenpalModal from '@/components/NewPenpalModal'
 import ContinuePenpalModal from '@/components/ContinuePenpalModal'
 
 export const metadata: Metadata = {
@@ -17,7 +16,7 @@ export default function HomePage() {
       <div className="anim-area">
         <HomeAnimation />
         <div className="home-buttons">
-          <NewPenpalModal />
+          <Link href="/start" className="btn btn--primary">START</Link>
           <ContinuePenpalModal />
         </div>
       </div>
