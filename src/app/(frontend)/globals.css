@@ -1175,6 +1175,29 @@ html, body {
   to { transform: rotate(360deg); }
 }
 
+/* ─── Full-bleed image mode ─── */
+
+.barn-door__bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none; /* override global img reset */
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.barn-door__bg-image--clickable {
+  cursor: zoom-in;
+}
+
+/* When image fills the door, the contributor text overlays on top */
+.contributor--overlay {
+  position: relative;
+  z-index: 1;
+}
+
 /* ════════════════════════════════════════
    START PAGE
    ════════════════════════════════════════ */

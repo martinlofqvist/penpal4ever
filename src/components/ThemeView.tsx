@@ -340,8 +340,11 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   const leftUploadKey  = `${index}-left`
   const rightUploadKey = `${index}-right`
 
-  const leftHasImage  = !!(theme.left?.image  || uploadedImages[leftUploadKey])
-  const rightHasImage = !!(theme.right?.image || uploadedImages[rightUploadKey])
+  const leftImageSrc  = uploadedImages[leftUploadKey]  ?? theme.left?.image  ?? null
+  const rightImageSrc = uploadedImages[rightUploadKey] ?? theme.right?.image ?? null
+
+  const leftHasImage  = !!leftImageSrc
+  const rightHasImage = !!rightImageSrc
   const bothUploaded  = leftHasImage && rightHasImage
 
   const hasPrev      = index > 0
@@ -405,53 +408,59 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         <div className="barn-wrap">
 
           <div ref={doorLeftRef} className="barn-door barn-door--left">
-            <div className="contributor">
+            {leftImageSrc && (
+              <img
+                className="barn-door__bg-image barn-door__bg-image--clickable"
+                src={leftImageSrc}
+                alt={theme.left?.caption ?? ''}
+                onClick={() => setLightboxUrl(leftImageSrc)}
+              />
+            )}
+            <div className={`contributor${leftImageSrc ? ' contributor--overlay' : ''}`}>
               <h3 className="contributor__name">{leftName}</h3>
-              <div className="contributor__frame">
-                {theme.left?.image || uploadedImages[leftUploadKey] ? (
-                  <img
-                    className="contributor__image contributor__image--clickable"
-                    src={uploadedImages[leftUploadKey] ?? theme.left?.image}
-                    alt={theme.left?.caption ?? ''}
-                    onClick={() => setLightboxUrl(uploadedImages[leftUploadKey] ?? theme.left?.image ?? null)}
-                  />
-                ) : userSide === 'left' ? (
-                  <UploadZone
-                    side="left"
-                    themeIndex={index}
-                    correspondenceSlug={correspondenceSlug}
-                    onUploaded={(url) => handleUploaded(leftUploadKey, url)}
-                  />
-                ) : (
-                  <div className="upload-zone upload-zone--empty" />
-                )}
-              </div>
+              {!leftImageSrc && (
+                <div className="contributor__frame">
+                  {userSide === 'left' ? (
+                    <UploadZone
+                      side="left"
+                      themeIndex={index}
+                      correspondenceSlug={correspondenceSlug}
+                      onUploaded={(url) => handleUploaded(leftUploadKey, url)}
+                    />
+                  ) : (
+                    <div className="upload-zone upload-zone--empty" />
+                  )}
+                </div>
+              )}
               <p className="contributor__caption">{theme.left?.caption ?? ''}</p>
             </div>
           </div>
 
           <div ref={doorRightRef} className="barn-door barn-door--right">
-            <div className="contributor">
+            {rightImageSrc && (
+              <img
+                className="barn-door__bg-image barn-door__bg-image--clickable"
+                src={rightImageSrc}
+                alt={theme.right?.caption ?? ''}
+                onClick={() => setLightboxUrl(rightImageSrc)}
+              />
+            )}
+            <div className={`contributor${rightImageSrc ? ' contributor--overlay' : ''}`}>
               <h3 className="contributor__name">{rightName}</h3>
-              <div className="contributor__frame">
-                {theme.right?.image || uploadedImages[rightUploadKey] ? (
-                  <img
-                    className="contributor__image contributor__image--clickable"
-                    src={uploadedImages[rightUploadKey] ?? theme.right?.image}
-                    alt={theme.right?.caption ?? ''}
-                    onClick={() => setLightboxUrl(uploadedImages[rightUploadKey] ?? theme.right?.image ?? null)}
-                  />
-                ) : userSide === 'right' ? (
-                  <UploadZone
-                    side="right"
-                    themeIndex={index}
-                    correspondenceSlug={correspondenceSlug}
-                    onUploaded={(url) => handleUploaded(rightUploadKey, url)}
-                  />
-                ) : (
-                  <div className="upload-zone upload-zone--empty" />
-                )}
-              </div>
+              {!rightImageSrc && (
+                <div className="contributor__frame">
+                  {userSide === 'right' ? (
+                    <UploadZone
+                      side="right"
+                      themeIndex={index}
+                      correspondenceSlug={correspondenceSlug}
+                      onUploaded={(url) => handleUploaded(rightUploadKey, url)}
+                    />
+                  ) : (
+                    <div className="upload-zone upload-zone--empty" />
+                  )}
+                </div>
+              )}
               <p className="contributor__caption">{theme.right?.caption ?? ''}</p>
             </div>
           </div>
