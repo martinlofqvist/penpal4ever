@@ -828,7 +828,7 @@ html, body {
   font-family: var(--font-primary);
   font-size: clamp(0.8rem, 1.45vw, 1.375rem);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
   line-height: calc(28 / 22);
 }
 
@@ -851,7 +851,7 @@ html, body {
   font-family: var(--font-primary);
   font-size: clamp(2.5rem, 6.81vw, 6.44rem);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.05em;
   line-height: 0.9247;
   text-align: center;
   width: 100%;
@@ -981,7 +981,7 @@ html, body {
 /* Fixed-width side columns keep the center text perfectly centred */
 .ct-header__side {
   flex-shrink: 0;
-  width: 1.9rem;
+  min-width: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -998,14 +998,14 @@ html, body {
 }
 
 .nav-btn {
-  width: 1.9rem;
-  height: 1.9rem;
+  height: clamp(2rem, 4.48vh, 2.75rem);
+  padding: 0 clamp(0.5rem, 0.73vw, 0.69rem);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-black);
   border: none;
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
   flex-shrink: 0;
   transition: opacity 0.15s ease;
@@ -1046,7 +1046,7 @@ html, body {
   font-family: var(--font-primary);
   font-size: clamp(0.8rem, 1.45vw, 1.375rem);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
   text-align: center;
   flex-shrink: 0;
 }
@@ -1196,6 +1196,10 @@ html, body {
 .contributor--overlay {
   position: relative;
   z-index: 1;
+  height: 100%;
+  justify-content: flex-end;
+  padding-bottom: 8.66vh; /* 85px at 982px viewport = Figma py-[85px] */
+  gap: 0.625rem;           /* 10px = Figma gap-[10px] */
 }
 
 /* ════════════════════════════════════════
