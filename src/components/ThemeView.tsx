@@ -181,6 +181,12 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   // Header text opacity — fades between themes
   const [headerOpacity, setHeaderOpacity] = useState(1)
 
+  // Lightbox
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
+
+  // Debug mode — append ?debug=true to URL to always show nav buttons
+  const [debugMode, setDebugMode] = useState(false)
+
   // Refs for direct DOM animation
   const introBlockRef = useRef<HTMLDivElement>(null)
   const ctHeaderRef   = useRef<HTMLElement>(null)
@@ -246,7 +252,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
       }
     }
 
-    // 3. Load existing uploaded images from the server
+    // 3. Debug mode via ?debug=true
+    setDebugMode(new URLSearchParams(window.location.search).get('debug') === 'true')
+
+    // 4. Load existing uploaded images from the server
     fetch(`/api/correspondences/${correspondenceSlug}`)
       .then(r => r.json())
       .then(data => {
@@ -309,6 +318,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape')     setLightboxUrl(null)
       if (e.key === 'ArrowLeft')  navigateTo(index - 1)
       if (e.key === 'ArrowRight') navigateTo(index + 1)
     }
@@ -326,8 +336,19 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
 
   const theme   = themes[index]
   const ordinal = ordinalLabel(index)
-  const canPrev = index > 0 && !isAnimating
-  const canNext = index < themes.length - 1 && !isAnimating
+
+  const leftUploadKey  = `${index}-left`
+  const rightUploadKey = `${index}-right`
+
+  const leftHasImage  = !!(theme.left?.image  || uploadedImages[leftUploadKey])
+  const rightHasImage = !!(theme.right?.image || uploadedImages[rightUploadKey])
+  const bothUploaded  = leftHasImage && rightHasImage
+
+  const hasPrev      = index > 0
+  const hasNextTheme = index < themes.length - 1
+  const canPrev      = hasPrev && !isAnimating
+  const showNext     = hasNextTheme && (bothUploaded || debugMode)
+  const canNext      = showNext && !isAnimating
 
   const headerStyle = {
     opacity:    headerOpacity,
@@ -336,9 +357,6 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
 
   const leftName  = yourName  ?? theme.left?.name  ?? 'DANIEL'
   const rightName = penpalName || theme.right?.name || 'PENPAL'
-
-  const leftUploadKey  = `${index}-left`
-  const rightUploadKey = `${index}-right`
 
   return (
     <>
@@ -392,9 +410,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
               <div className="contributor__frame">
                 {theme.left?.image || uploadedImages[leftUploadKey] ? (
                   <img
-                    className="contributor__image"
+                    className="contributor__image contributor__image--clickable"
                     src={uploadedImages[leftUploadKey] ?? theme.left?.image}
                     alt={theme.left?.caption ?? ''}
+                    onClick={() => setLightboxUrl(uploadedImages[leftUploadKey] ?? theme.left?.image ?? null)}
                   />
                 ) : userSide === 'left' ? (
                   <UploadZone
@@ -417,9 +436,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
               <div className="contributor__frame">
                 {theme.right?.image || uploadedImages[rightUploadKey] ? (
                   <img
-                    className="contributor__image"
+                    className="contributor__image contributor__image--clickable"
                     src={uploadedImages[rightUploadKey] ?? theme.right?.image}
                     alt={theme.right?.caption ?? ''}
+                    onClick={() => setLightboxUrl(uploadedImages[rightUploadKey] ?? theme.right?.image ?? null)}
                   />
                 ) : userSide === 'right' ? (
                   <UploadZone
@@ -440,17 +460,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
 
         {/* Header overlay */}
         <header ref={ctHeaderRef} className="ct-header">
-          <p className="theme-label">
-            <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal" style={headerStyle}>{ordinal}</span></span>
-            <span>THEME</span>
-            <span>IS</span>
-          </p>
-          <h1 className="theme-title" style={headerStyle}>
-            &ldquo;{theme.title}&rdquo;
-          </h1>
 
-          <div className="ct-header__nav">
-            {index > 0 && (
+          {/* Prev button — left side, vertically centred with text block */}
+          <div className="ct-header__side ct-header__side--left">
+            {hasPrev && (
               <button
                 className="nav-btn nav-btn--prev"
                 onClick={() => navigateTo(index - 1)}
@@ -462,20 +475,62 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                 </svg>
               </button>
             )}
-            <button
-              className="nav-btn nav-btn--next"
-              onClick={() => navigateTo(index + 1)}
-              disabled={!canNext}
-              aria-label="Next theme"
-            >
-              <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-                <path d="M1 1L6 6L1 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
           </div>
+
+          {/* Centre: label + title */}
+          <div className="ct-header__center">
+            <p className="theme-label">
+              <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal" style={headerStyle}>{ordinal}</span></span>
+              <span>THEME</span>
+              <span>IS</span>
+            </p>
+            <h1 className="theme-title" style={headerStyle}>
+              &ldquo;{theme.title}&rdquo;
+            </h1>
+          </div>
+
+          {/* Next button — right side */}
+          <div className="ct-header__side ct-header__side--right">
+            {showNext && (
+              <button
+                className="nav-btn nav-btn--next"
+                onClick={() => navigateTo(index + 1)}
+                disabled={!canNext}
+                aria-label="Next theme"
+              >
+                <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+                  <path d="M1 1L6 6L1 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
+          </div>
+
         </header>
 
       </div>
+
+      {/* ─── Lightbox ─── */}
+      {lightboxUrl && (
+        <div
+          className="lightbox"
+          onClick={() => setLightboxUrl(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image preview"
+        >
+          <button
+            className="lightbox__close"
+            onClick={() => setLightboxUrl(null)}
+            aria-label="Close"
+          >✕</button>
+          <img
+            className="lightbox__img"
+            src={lightboxUrl}
+            alt="Full size preview"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </>
   )
 }

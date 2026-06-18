@@ -34,11 +34,13 @@ export default buildConfig({
   editor: lexicalEditor(),
   plugins: [
     vercelBlobStorage({
-      enabled: true,
+      // Only enable when the token is present — avoids silent no-op on Vercel
+      // if the env var is missing (which causes a fallback to local disk and ENOENT crashes).
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       collections: {
         media: true,
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: process.env.BLOB_READ_WRITE_TOKEN ?? '',
     }),
   ],
   secret: process.env.PAYLOAD_SECRET || '',

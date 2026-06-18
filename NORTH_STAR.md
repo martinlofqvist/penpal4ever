@@ -60,3 +60,10 @@ The following copy was written for the homepage and should serve as a reference 
 ## The long game
 
 The archive grows one theme at a time. Eventually the full list becomes its own thing — a record of how two people see differently, theme after theme, over years.
+
+
+---
+
+## Theme tonality reference
+
+The themes copy take inspiration from Joshua Idehen, Patti Smith, Fiona Apple, Pet Shop Boys, Charles Bukowski and Fantastic Man. They are witty, carries double meaning, can be interpreted in many ways and are suited for creative exploration. 
