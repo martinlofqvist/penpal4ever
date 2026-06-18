@@ -104,6 +104,18 @@ html, body {
   overflow: hidden;
 }
 
+/* ─── Mascot ─── */
+
+.home-mascot {
+  position: absolute;
+  left: 48.2%;
+  top: 50%;
+  z-index: 10;
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform;
+}
+
 /* ─── Animation area ─── */
 
 .anim-area {
