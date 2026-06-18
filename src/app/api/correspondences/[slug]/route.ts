@@ -30,7 +30,9 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
     const result: Record<string, string> = {}
     for (const r of responses) {
-      const imageUrl = (r.image as any)?.url
+      const img = r.image as any
+      const imageUrl: string | null =
+        img?.url ?? (img?.filename ? `/api/media/file/${img.filename}` : null)
       if (imageUrl) {
         result[`${r.themeIndex}-${r.side}`] = imageUrl
       }

@@ -34,8 +34,10 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 const ORDINALS = [
   'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH',
   'SIXTH', 'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH',
+  'ELEVENTH', 'TWELFTH', 'THIRTEENTH', 'FOURTEENTH', 'FIFTEENTH',
+  'SIXTEENTH', 'SEVENTEENTH', 'EIGHTEENTH', 'NINETEENTH', 'TWENTIETH',
 ]
-const ordinalLabel = (n: number) => ORDINALS[n] ?? `#${n + 1}`
+const ordinalLabel = (n: number) => ORDINALS[n] ?? `${n + 1}TH`
 
 // ─── Upload Zone ─────────────────────────────────────────
 

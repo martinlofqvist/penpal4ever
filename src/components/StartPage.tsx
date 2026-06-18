@@ -122,7 +122,6 @@ export default function StartPage() {
               </button>
             </form>
 
-            <Link href="/" className="start-back">← BACK</Link>
           </div>
 
           {/* SHARE STATE */}
@@ -132,7 +131,6 @@ export default function StartPage() {
             <Link href={`/correspondence/${slug}`} className="start-open-btn">
               OPEN CORRESPONDENCE →
             </Link>
-            <Link href="/" className="start-back">← HOME</Link>
           </div>
 
         </div>

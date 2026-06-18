@@ -41,7 +41,7 @@ export async function POST(
     const buffer = Buffer.from(arrayBuffer)
 
     // Upload to Media collection
-    const media = await payload.create({
+    const createdMedia = await payload.create({
       collection: 'media',
       data: {
         alt: `${correspondence.yourFirstName} - Theme ${themeIndex + 1} (${side})`,
@@ -54,6 +54,13 @@ export async function POST(
       },
     })
 
+    // Re-fetch the media document so Vercel Blob URL is guaranteed to be populated
+    const media = await payload.findByID({
+      collection: 'media',
+      id: createdMedia.id,
+      depth: 0,
+    })
+
     // Create Response record
     const response = await payload.create({
       collection: 'responses',
@@ -61,16 +68,21 @@ export async function POST(
         correspondence: correspondence.id,
         themeIndex,
         side,
-        image: media.id,
+        image: createdMedia.id,
         submittedAt: new Date().toISOString(),
       },
     })
 
+    // Vercel Blob populates .url; fall back to Payload's local file endpoint in dev
+    const imageUrl: string | null =
+      (media as any).url ??
+      ((media as any).filename ? `/api/media/file/${(media as any).filename}` : null)
+
     return NextResponse.json({
       success: true,
       responseId: response.id,
-      mediaId: media.id,
-      imageUrl: (media as any).url,
+      mediaId: createdMedia.id,
+      imageUrl,
     })
   } catch (err) {
     console.error('POST /api/correspondences/[slug]/upload:', err)
