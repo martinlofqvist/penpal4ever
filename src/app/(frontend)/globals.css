@@ -822,8 +822,8 @@ html, body {
 
 .theme-label {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 56vw;
+  grid-template-columns: repeat(3, 1fr);
+  width: 52vw;
   margin: 0 auto;
   font-family: var(--font-primary);
   font-size: clamp(0.8rem, 1.45vw, 1.375rem);
@@ -836,17 +836,25 @@ html, body {
   text-align: center;
 }
 
+/* "THE FIRST" group — both words share a cell and sit side-by-side */
+.theme-label__the-num {
+  display: flex;
+  justify-content: center;
+  gap: 0.35em;
+}
+
 .label-ordinal {
   transition: opacity 0.2s ease;
 }
 
 .theme-title {
   font-family: var(--font-primary);
-  font-size: clamp(2.5rem, 6.81vw, 6.44rem);
+  font-size: clamp(2rem, 5.8vw, 5.5rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 0.9247;
   text-align: center;
+  max-width: 52vw;
   width: 100%;
 }
 
@@ -978,6 +986,10 @@ html, body {
   justify-content: space-between;
   align-items: center;
   pointer-events: auto;
+}
+
+.nav-btn--next {
+  margin-left: auto;
 }
 
 .nav-btn {
@@ -1132,6 +1144,13 @@ html, body {
 .upload-zone--disabled {
   pointer-events: none;
   opacity: 0.4;
+}
+
+/* Empty placeholder shown when the other person hasn't uploaded yet */
+.upload-zone--empty {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .upload-zone__spinner {

@@ -42,6 +42,14 @@ export default function StartPage() {
       if (!res.ok) throw new Error(data.error || 'Failed')
       setShareUrl(`${window.location.origin}/correspondence/${data.slug}`)
       setSlug(data.slug)
+      // Mark this browser as the creator so the onboarding modal is suppressed
+      try {
+        const key = 'penpal4ever:created'
+        const existing: string[] = JSON.parse(localStorage.getItem(key) || '[]')
+        if (!existing.includes(data.slug)) existing.push(data.slug)
+        localStorage.setItem(key, JSON.stringify(existing))
+        localStorage.setItem(`penpal4ever:role:${data.slug}`, 'left')
+      } catch {}
       setPhase('share')
     } catch (err: any) {
       setError(err.message || 'Something went wrong.')

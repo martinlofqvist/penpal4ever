@@ -6,6 +6,43 @@ interface RouteParams {
   params: Promise<{ slug: string }>
 }
 
+// GET /api/correspondences/[slug] — fetch uploaded responses (image URLs keyed by themeIndex+side)
+export async function GET(_req: NextRequest, { params }: RouteParams) {
+  try {
+    const { slug } = await params
+    const payload = await getPayload({ config })
+
+    const { docs: corDocs } = await payload.find({
+      collection: 'correspondences',
+      where: { slug: { equals: slug } },
+      limit: 1,
+    })
+    if (!corDocs.length) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+    const correspondenceId = corDocs[0].id
+
+    const { docs: responses } = await payload.find({
+      collection: 'responses',
+      where: { correspondence: { equals: correspondenceId } },
+      depth: 1,
+      limit: 200,
+    })
+
+    const result: Record<string, string> = {}
+    for (const r of responses) {
+      const imageUrl = (r.image as any)?.url
+      if (imageUrl) {
+        result[`${r.themeIndex}-${r.side}`] = imageUrl
+      }
+    }
+
+    return NextResponse.json({ images: result })
+  } catch (err) {
+    console.error('GET /api/correspondences/[slug]:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 // PATCH /api/correspondences/[slug] — set penpal details (first-time visit)
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {

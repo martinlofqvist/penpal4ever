@@ -160,7 +160,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   }, [themeOrder, themeById])
 
   const [penpalName, setPenpalName] = useState(penpalNameProp ?? '')
-  const [showOnboarding, setShowOnboarding] = useState(needsPenpal)
+  // Start hidden; resolved after reading localStorage to avoid flash for creator
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  // 'left' = creator, 'right' = penpal, null = unknown
+  const [userSide, setUserSide] = useState<'left' | 'right' | null>(null)
 
   const [index, setIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -214,6 +217,43 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
     left.style.transform  = ''
     right.style.transform = ''
   }, [])
+
+  // ─── Init: localStorage role + onboarding + load responses ──
+
+  useEffect(() => {
+    if (!correspondenceSlug) return
+
+    // 1. Determine user side from localStorage
+    let side: 'left' | 'right' | null = null
+    try {
+      const stored = localStorage.getItem(`penpal4ever:role:${correspondenceSlug}`)
+      if (stored === 'left' || stored === 'right') side = stored
+    } catch {}
+    setUserSide(side)
+
+    // 2. Decide whether to show onboarding modal
+    if (needsPenpal) {
+      try {
+        const created: string[] = JSON.parse(localStorage.getItem('penpal4ever:created') || '[]')
+        // Only show if this browser did NOT create this correspondence
+        if (!created.includes(correspondenceSlug)) {
+          setShowOnboarding(true)
+        }
+      } catch {
+        setShowOnboarding(true)
+      }
+    }
+
+    // 3. Load existing uploaded images from the server
+    fetch(`/api/correspondences/${correspondenceSlug}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.images && typeof data.images === 'object') {
+          setUploadedImages(prev => ({ ...prev, ...data.images }))
+        }
+      })
+      .catch(() => {})
+  }, [correspondenceSlug, needsPenpal])
 
   // ─── Intro sequence ───────────────────────────────────
 
@@ -308,6 +348,11 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           onComplete={(name) => {
             setPenpalName(name.toUpperCase())
             setShowOnboarding(false)
+            // Mark this browser as the penpal (right side)
+            try {
+              localStorage.setItem(`penpal4ever:role:${correspondenceSlug}`, 'right')
+            } catch {}
+            setUserSide('right')
           }}
         />
       )}
@@ -324,8 +369,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
             style={{ '--intro-fly-offset': flyOffset } as React.CSSProperties}
           >
             <p className="theme-label">
-              <span>THE</span>
-              <span className="label-ordinal">{ordinal}</span>
+              <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal">{ordinal}</span></span>
               <span>THEME</span>
               <span>IS</span>
             </p>
@@ -350,13 +394,15 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                     src={uploadedImages[leftUploadKey] ?? theme.left?.image}
                     alt={theme.left?.caption ?? ''}
                   />
-                ) : (
+                ) : userSide === 'left' ? (
                   <UploadZone
                     side="left"
                     themeIndex={index}
                     correspondenceSlug={correspondenceSlug}
                     onUploaded={(url) => handleUploaded(leftUploadKey, url)}
                   />
+                ) : (
+                  <div className="upload-zone upload-zone--empty" />
                 )}
               </div>
               <p className="contributor__caption">{theme.left?.caption ?? ''}</p>
@@ -373,13 +419,15 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                     src={uploadedImages[rightUploadKey] ?? theme.right?.image}
                     alt={theme.right?.caption ?? ''}
                   />
-                ) : (
+                ) : userSide === 'right' ? (
                   <UploadZone
                     side="right"
                     themeIndex={index}
                     correspondenceSlug={correspondenceSlug}
                     onUploaded={(url) => handleUploaded(rightUploadKey, url)}
                   />
+                ) : (
+                  <div className="upload-zone upload-zone--empty" />
                 )}
               </div>
               <p className="contributor__caption">{theme.right?.caption ?? ''}</p>
@@ -391,8 +439,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         {/* Header overlay */}
         <header ref={ctHeaderRef} className="ct-header">
           <p className="theme-label">
-            <span>THE</span>
-            <span className="label-ordinal" style={headerStyle}>{ordinal}</span>
+            <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal" style={headerStyle}>{ordinal}</span></span>
             <span>THEME</span>
             <span>IS</span>
           </p>
@@ -401,16 +448,18 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           </h1>
 
           <div className="ct-header__nav">
-            <button
-              className="nav-btn nav-btn--prev"
-              onClick={() => navigateTo(index - 1)}
-              disabled={!canPrev}
-              aria-label="Previous theme"
-            >
-              <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-                <path d="M6 1L1 6L6 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {index > 0 && (
+              <button
+                className="nav-btn nav-btn--prev"
+                onClick={() => navigateTo(index - 1)}
+                disabled={!canPrev}
+                aria-label="Previous theme"
+              >
+                <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+                  <path d="M6 1L1 6L6 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
             <button
               className="nav-btn nav-btn--next"
               onClick={() => navigateTo(index + 1)}
