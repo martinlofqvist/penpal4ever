@@ -407,62 +407,86 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         {/* Barn doors */}
         <div className="barn-wrap">
 
+          {/* ── Left door ── */}
           <div ref={doorLeftRef} className="barn-door barn-door--left">
-            {leftImageSrc && (
-              <img
-                className="barn-door__bg-image barn-door__bg-image--clickable"
-                src={leftImageSrc}
-                alt={theme.left?.caption ?? ''}
-                onClick={() => setLightboxUrl(leftImageSrc)}
-              />
-            )}
-            <div className={`contributor${leftImageSrc ? ' contributor--overlay' : ''}`}>
-              <h3 className="contributor__name">{leftName}</h3>
-              {!leftImageSrc && (
-                <div className="contributor__frame">
-                  {userSide === 'left' ? (
+            {leftImageSrc ? (
+              <>
+                <img
+                  className="barn-door__bg-image barn-door__bg-image--clickable"
+                  src={leftImageSrc}
+                  alt={theme.left?.caption ?? ''}
+                  onClick={() => setLightboxUrl(leftImageSrc)}
+                />
+                <div className="contributor contributor--overlay">
+                  <h3 className="contributor__name">{leftName}</h3>
+                  {theme.left?.caption && (
+                    <p className="contributor__caption">{theme.left.caption}</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="barn-door__panel">
+                <div className="barn-door__upload-wrap">
+                  {userSide === 'left' && (
                     <UploadZone
                       side="left"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
                       onUploaded={(url) => handleUploaded(leftUploadKey, url)}
                     />
-                  ) : (
-                    <div className="upload-zone upload-zone--empty" />
                   )}
                 </div>
-              )}
-              <p className="contributor__caption">{theme.left?.caption ?? ''}</p>
-            </div>
+                <div className="contributor">
+                  <h3 className="contributor__name">{leftName}</h3>
+                  {userSide !== 'left' && (
+                    <p className="contributor__caption contributor__caption--muted">
+                      HAS NOT SEEN THIS THEME, YET
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* ── Right door ── */}
           <div ref={doorRightRef} className="barn-door barn-door--right">
-            {rightImageSrc && (
-              <img
-                className="barn-door__bg-image barn-door__bg-image--clickable"
-                src={rightImageSrc}
-                alt={theme.right?.caption ?? ''}
-                onClick={() => setLightboxUrl(rightImageSrc)}
-              />
-            )}
-            <div className={`contributor${rightImageSrc ? ' contributor--overlay' : ''}`}>
-              <h3 className="contributor__name">{rightName}</h3>
-              {!rightImageSrc && (
-                <div className="contributor__frame">
-                  {userSide === 'right' ? (
+            {rightImageSrc ? (
+              <>
+                <img
+                  className="barn-door__bg-image barn-door__bg-image--clickable"
+                  src={rightImageSrc}
+                  alt={theme.right?.caption ?? ''}
+                  onClick={() => setLightboxUrl(rightImageSrc)}
+                />
+                <div className="contributor contributor--overlay">
+                  <h3 className="contributor__name">{rightName}</h3>
+                  {theme.right?.caption && (
+                    <p className="contributor__caption">{theme.right.caption}</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="barn-door__panel">
+                <div className="barn-door__upload-wrap">
+                  {userSide === 'right' && (
                     <UploadZone
                       side="right"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
                       onUploaded={(url) => handleUploaded(rightUploadKey, url)}
                     />
-                  ) : (
-                    <div className="upload-zone upload-zone--empty" />
                   )}
                 </div>
-              )}
-              <p className="contributor__caption">{theme.right?.caption ?? ''}</p>
-            </div>
+                <div className="contributor">
+                  <h3 className="contributor__name">{rightName}</h3>
+                  {userSide !== 'right' && (
+                    <p className="contributor__caption contributor__caption--muted">
+                      HAS NOT SEEN THIS THEME, YET
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
         </div>
