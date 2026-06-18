@@ -13,7 +13,7 @@ export default function HomeMascot() {
     const scale = 1 + (Math.random() - 0.5) * 0.08  // 0.96–1.04
 
     setStyle({
-      transform: `translate(calc(-50% + ${dx}vw), calc(-50% + ${dy}vh)) scale(${scale})`,
+      transform: `translateX(calc(-50% + ${dx}vw)) translateY(${dy}vh) scale(${scale})`,
     })
   }, [])
 
@@ -29,7 +29,7 @@ export default function HomeMascot() {
         width={320}
         height={320}
         priority
-        style={{ width: '18vw', height: 'auto', maxWidth: '260px', minWidth: '120px' }}
+        style={{ width: '19.8vw', height: 'auto', maxWidth: '286px', minWidth: '132px' }}
       />
     </div>
   )
