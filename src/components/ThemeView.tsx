@@ -194,6 +194,11 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   // Lightbox
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
 
+  // Three-dot change-image menu
+  const [menuOpenSide, setMenuOpenSide] = useState<'left' | 'right' | null>(null)
+  const changeLeftRef  = useRef<HTMLInputElement>(null)
+  const changeRightRef = useRef<HTMLInputElement>(null)
+
   // Debug mode — append ?debug=true to URL to always show nav buttons
   const [debugMode, setDebugMode] = useState(false)
 
@@ -268,6 +273,29 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
       .catch(() => {})
   }, [correspondenceSlug, needsPenpal, initialSide])
 
+  // ─── Poll for new images from the other person ───────
+  // Runs every 5 s while the page is open; merges new URLs into uploadedImages.
+
+  useEffect(() => {
+    if (!correspondenceSlug) return
+    const interval = setInterval(() => {
+      fetch(`/api/correspondences/${correspondenceSlug}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.images && typeof data.images === 'object') {
+            setUploadedImages(prev => {
+              const hasNew = Object.entries(data.images as Record<string, string>).some(
+                ([k, v]) => v && prev[k] !== v
+              )
+              return hasNew ? { ...prev, ...(data.images as Record<string, string>) } : prev
+            })
+          }
+        })
+        .catch(() => {})
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [correspondenceSlug])
+
   // ─── Intro sequence ───────────────────────────────────
 
   useEffect(() => {
@@ -320,13 +348,21 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape')     setLightboxUrl(null)
+      if (e.key === 'Escape')     { setLightboxUrl(null); setMenuOpenSide(null) }
       if (e.key === 'ArrowLeft')  navigateTo(index - 1)
       if (e.key === 'ArrowRight') navigateTo(index + 1)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [navigateTo, index])
+
+  // Close three-dot menu when clicking anywhere outside it
+  useEffect(() => {
+    if (!menuOpenSide) return
+    const close = () => setMenuOpenSide(null)
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
+  }, [menuOpenSide])
 
   // ─── Uploaded image handler ───────────────────────────
   // The upload API may return imageUrl=null even when the file is in Blob
@@ -364,6 +400,27 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         })
     }
     setTimeout(tryFetch, 200) // brief initial delay for DB write to be visible
+  }
+
+  // ─── Change image (replace existing upload) ──────────
+
+  async function handleChangeImage(side: 'left' | 'right', file: File) {
+    if (!correspondenceSlug) return
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('token', token ?? '')
+    fd.append('themeIndex', String(index))
+    try {
+      const res = await fetch(`/api/correspondences/${correspondenceSlug}/upload`, {
+        method: 'POST',
+        body: fd,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      handleUploaded(`${index}-${side}`, data.imageUrl)
+    } catch (err) {
+      console.error('Change image failed:', err)
+    }
   }
 
   // ─── Render ───────────────────────────────────────────
@@ -461,6 +518,38 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                     <p className="contributor__caption">{theme.left.caption}</p>
                   )}
                 </div>
+                {userSide === 'left' && (
+                  <div className="barn-door__menu" onClick={e => e.stopPropagation()}>
+                    <button
+                      className="barn-door__menu-trigger"
+                      onClick={() => setMenuOpenSide(p => p === 'left' ? null : 'left')}
+                      aria-label="Image options"
+                    >
+                      <span /><span /><span />
+                    </button>
+                    {menuOpenSide === 'left' && (
+                      <div className="barn-door__menu-popup">
+                        <button
+                          className="barn-door__menu-item"
+                          onClick={() => { setMenuOpenSide(null); changeLeftRef.current?.click() }}
+                        >
+                          CHANGE IMAGE
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      ref={changeLeftRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (file) handleChangeImage('left', file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <div className="barn-door__panel">
@@ -508,6 +597,38 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                     <p className="contributor__caption">{theme.right.caption}</p>
                   )}
                 </div>
+                {userSide === 'right' && (
+                  <div className="barn-door__menu" onClick={e => e.stopPropagation()}>
+                    <button
+                      className="barn-door__menu-trigger"
+                      onClick={() => setMenuOpenSide(p => p === 'right' ? null : 'right')}
+                      aria-label="Image options"
+                    >
+                      <span /><span /><span />
+                    </button>
+                    {menuOpenSide === 'right' && (
+                      <div className="barn-door__menu-popup">
+                        <button
+                          className="barn-door__menu-item"
+                          onClick={() => { setMenuOpenSide(null); changeRightRef.current?.click() }}
+                        >
+                          CHANGE IMAGE
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      ref={changeRightRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (file) handleChangeImage('right', file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <div className="barn-door__panel">
@@ -571,7 +692,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
             )}
           </div>
 
-          {/* Centre: label + title */}
+          {/* Centre: label + title + done badge */}
           <div className="ct-header__center">
             <p className="theme-label">
               <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal" style={headerStyle}>{ordinal}</span></span>
@@ -581,6 +702,9 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
             <h1 className="theme-title" style={headerStyle}>
               &ldquo;{theme.title}&rdquo;
             </h1>
+            {bothUploaded && (
+              <div className="theme-done-badge">THEME IS DONE</div>
+            )}
           </div>
 
           {/* Next button — right side */}

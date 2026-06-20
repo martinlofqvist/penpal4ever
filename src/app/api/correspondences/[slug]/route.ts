@@ -25,11 +25,14 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
       collection: 'responses',
       where: { correspondence: { equals: correspondenceId } },
       depth: 1,
+      sort: '-createdAt', // newest first — ensures latest upload wins when user changes image
       limit: 200,
     })
 
     const result: Record<string, string> = {}
     for (const r of responses) {
+      const key = `${r.themeIndex}-${r.side}`
+      if (result[key]) continue // first (newest) entry wins; skip older duplicates
       const img = r.image as any
       const imageUrl: string | null =
         img?.url ??
@@ -37,7 +40,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
         (img?.filename ? `/api/media/file/${img.filename}` : null)
       console.log('[GET images] themeIndex:', r.themeIndex, 'side:', r.side, '| img.url:', img?.url, '| img.filename:', img?.filename, '| resolved:', imageUrl)
       if (imageUrl) {
-        result[`${r.themeIndex}-${r.side}`] = imageUrl
+        result[key] = imageUrl
       }
     }
 
