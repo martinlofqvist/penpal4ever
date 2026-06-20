@@ -249,9 +249,8 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
     // 1. Side is derived server-side from the token — use directly
     setUserSide(initialSide)
 
-    // 2. Show onboarding if penpal hasn't registered yet and visitor has no token
-    //    (token=null means no recognised side — they must be the penpal arriving for the first time)
-    if (needsPenpal && initialSide === null) {
+    // 2. Show onboarding if penpal hasn't registered yet and this visitor has the right token
+    if (needsPenpal && initialSide === 'right') {
       setShowOnboarding(true)
     }
 
@@ -336,16 +335,35 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   // GET route — which uses depth:1 and reliably returns the Blob URL.
 
   function handleUploaded(slot: string, url: string | null) {
-    if (url) setUploadedImages(prev => ({ ...prev, [slot]: url }))
+    if (url) {
+      // Upload route returned the Blob URL directly — apply immediately
+      setUploadedImages(prev => ({ ...prev, [slot]: url }))
+      return
+    }
+    // Fallback: poll the GET route until the URL appears.
+    // The Vercel Blob URL may not be available in the upload response
+    // if the plugin resolves it via an afterRead hook (not afterCreate).
     if (!correspondenceSlug) return
-    fetch(`/api/correspondences/${correspondenceSlug}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.images && typeof data.images === 'object') {
-          setUploadedImages(prev => ({ ...prev, ...data.images }))
-        }
-      })
-      .catch(() => {})
+    let attempts = 0
+    function tryFetch() {
+      fetch(`/api/correspondences/${correspondenceSlug}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.images && typeof data.images === 'object') {
+            if (data.images[slot]) {
+              setUploadedImages(prev => ({ ...prev, ...data.images }))
+            } else if (attempts++ < 5) {
+              setTimeout(tryFetch, 600)
+            }
+          } else if (attempts++ < 5) {
+            setTimeout(tryFetch, 600)
+          }
+        })
+        .catch(() => {
+          if (attempts++ < 5) setTimeout(tryFetch, 600)
+        })
+    }
+    setTimeout(tryFetch, 200) // brief initial delay for DB write to be visible
   }
 
   // ─── Render ───────────────────────────────────────────

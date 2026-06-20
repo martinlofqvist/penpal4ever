@@ -61,13 +61,6 @@ export async function POST(
       },
     })
 
-    // Re-fetch the media document so Vercel Blob URL is guaranteed to be populated
-    const media = await payload.findByID({
-      collection: 'media',
-      id: createdMedia.id,
-      depth: 0,
-    })
-
     // Create Response record
     const response = await payload.create({
       collection: 'responses',
@@ -80,16 +73,25 @@ export async function POST(
       },
     })
 
-    // Try every possible location for the URL, in priority order.
-    // Vercel Blob stores the full URL in .url; createdMedia may have it immediately
-    // on create; refetch is a safety net. Fall back to local file endpoint in dev.
-    const imageUrl: string | null =
-      (createdMedia as any).url ??
-      (media as any).url ??
-      ((createdMedia as any).filename ? `/api/media/file/${(createdMedia as any).filename}` : null) ??
-      ((media as any).filename ? `/api/media/file/${(media as any).filename}` : null)
+    // Fetch the Response back with depth:1 so the image relationship is populated.
+    // The Vercel Blob plugin adds the URL via an afterRead hook that only fires
+    // during relationship population — this mirrors exactly what the GET route does.
+    const { docs: freshDocs } = await payload.find({
+      collection: 'responses',
+      where: { id: { equals: response.id } },
+      depth: 1,
+      limit: 1,
+    })
+    const freshImg = freshDocs[0]?.image as any
 
-    console.log('[upload] mediaId:', createdMedia.id, '| createdMedia.url:', (createdMedia as any).url, '| media.url:', (media as any).url, '| filename:', (media as any).filename, '| resolved imageUrl:', imageUrl)
+    const imageUrl: string | null =
+      freshImg?.url ??
+      freshImg?.thumbnailURL ??
+      (createdMedia as any).url ??
+      (freshImg?.filename ? `/api/media/file/${freshImg.filename}` : null) ??
+      ((createdMedia as any).filename ? `/api/media/file/${(createdMedia as any).filename}` : null)
+
+    console.log('[upload] responseId:', response.id, '| freshImg.url:', freshImg?.url, '| freshImg.filename:', freshImg?.filename, '| resolved imageUrl:', imageUrl)
 
     return NextResponse.json({
       success: true,
