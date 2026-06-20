@@ -25,3 +25,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Large design source files
+*.psd
+*.ai
+*.sketch
