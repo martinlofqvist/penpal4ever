@@ -444,7 +444,8 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           {/* ── Left door ── */}
           <div
             ref={doorLeftRef}
-            className={`barn-door barn-door--left${leftImageSrc ? ' barn-door--has-image' : ''}`}
+            className="barn-door barn-door--left"
+            style={leftImageSrc ? { cursor: 'zoom-in' } : undefined}
             onClick={leftImageSrc ? () => setLightboxUrl(leftImageSrc) : undefined}
           >
             {leftImageSrc ? (
@@ -466,6 +467,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                 <div className="barn-door__upload-wrap">
                   {userSide === 'left' && (
                     <UploadZone
+                      key={leftUploadKey}
                       side="left"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
@@ -489,7 +491,8 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           {/* ── Right door ── */}
           <div
             ref={doorRightRef}
-            className={`barn-door barn-door--right${rightImageSrc ? ' barn-door--has-image' : ''}`}
+            className="barn-door barn-door--right"
+            style={rightImageSrc ? { cursor: 'zoom-in' } : undefined}
             onClick={rightImageSrc ? () => setLightboxUrl(rightImageSrc) : undefined}
           >
             {rightImageSrc ? (
@@ -511,6 +514,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                 <div className="barn-door__upload-wrap">
                   {userSide === 'right' && (
                     <UploadZone
+                      key={rightUploadKey}
                       side="right"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
