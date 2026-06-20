@@ -13,6 +13,7 @@ export default function StartPage() {
   const [error,       setError]       = useState('')
   const [shareUrl,    setShareUrl]    = useState('')
   const [slug,        setSlug]        = useState('')
+  const [leftToken,   setLeftToken]   = useState('')
   const [copied,      setCopied]      = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteSent,  setInviteSent]  = useState(false)
@@ -40,16 +41,11 @@ export default function StartPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
-      setShareUrl(`${window.location.origin}/correspondence/${data.slug}`)
+      setShareUrl(`${window.location.origin}/correspondence/${data.slug}?token=${data.rightToken}`)
       setSlug(data.slug)
-      // Mark this browser as the creator so the onboarding modal is suppressed
-      try {
-        const key = 'penpal4ever:created'
-        const existing: string[] = JSON.parse(localStorage.getItem(key) || '[]')
-        if (!existing.includes(data.slug)) existing.push(data.slug)
-        localStorage.setItem(key, JSON.stringify(existing))
-        localStorage.setItem(`penpal4ever:role:${data.slug}`, 'left')
-      } catch {}
+      setLeftToken(data.leftToken)
+      // Redirect the creator to their token URL so they're recognised as left side
+      window.history.replaceState(null, '', `/correspondence/${data.slug}?token=${data.leftToken}`)
       setPhase('share')
     } catch (err: any) {
       setError(err.message || 'Something went wrong.')
@@ -128,7 +124,7 @@ export default function StartPage() {
           <div className="start-panel start-panel--share">
             <h1 className="start-heading">YOUR CORRESPON-<br />DENCE IS READY</h1>
             <p className="start-sub">Share the link with your penpal to begin.</p>
-            <Link href={`/correspondence/${slug}`} className="start-open-btn">
+            <Link href={`/correspondence/${slug}?token=${leftToken}`} className="start-open-btn">
               OPEN CORRESPONDENCE →
             </Link>
           </div>

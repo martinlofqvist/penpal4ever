@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 interface Props {
   correspondenceSlug: string
   yourName: string
-  onComplete: (penpalFirstName: string) => void
+  onComplete: (penpalFirstName: string, rightToken: string) => void
 }
 
 interface FormState {
@@ -54,7 +54,7 @@ export default function PenpalOnboardingModal({ correspondenceSlug, yourName, on
       })
       const data = await res.json()
       if (!res.ok && res.status !== 409) throw new Error(data.error || 'Failed to save details')
-      onComplete(form.firstName.trim())
+      onComplete(form.firstName.trim(), data.rightToken ?? '')
     } catch (err: any) {
       setError(err.message || 'Something went wrong.')
     } finally {

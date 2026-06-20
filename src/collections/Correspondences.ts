@@ -27,6 +27,19 @@ export const Correspondences: CollectionConfig = {
     { name: 'penpalFirstName', type: 'text',  required: false },
     { name: 'penpalLastName',  type: 'text',  required: false },
     { name: 'penpalEmail',     type: 'email', required: false },
+    // ─── Access tokens ───────────────────────────────────
+    {
+      name: 'leftToken',
+      type: 'text',
+      required: false,
+      admin: { description: 'Secret token for the creator (left side)' },
+    },
+    {
+      name: 'rightToken',
+      type: 'text',
+      required: false,
+      admin: { description: 'Secret token for the penpal (right side)' },
+    },
     // ─── Settings ────────────────────────────────────────
     { name: 'limitThemes',       type: 'checkbox', defaultValue: false },
     { name: 'maxThemes',         type: 'number' },

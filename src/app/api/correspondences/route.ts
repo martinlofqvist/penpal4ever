@@ -6,6 +6,10 @@ function generateSlug(): string {
   return crypto.randomUUID().replace(/-/g, '').slice(0, 10)
 }
 
+function generateToken(): string {
+  return crypto.randomUUID().replace(/-/g, '')
+}
+
 // POST /api/correspondences — create a new correspondence
 export async function POST(req: NextRequest) {
   try {
@@ -32,12 +36,16 @@ export async function POST(req: NextRequest) {
     }
     const themeOrder = ids
 
-    const slug = generateSlug()
+    const slug       = generateSlug()
+    const leftToken  = generateToken()
+    const rightToken = generateToken()
 
     const doc = await payload.create({
       collection: 'correspondences',
       data: {
         slug,
+        leftToken,
+        rightToken,
         yourFirstName:   yourFirstName.trim(),
         yourLastName:    (yourLastName ?? '').trim(),
         yourEmail:       (yourEmail ?? '').trim().toLowerCase(),
@@ -51,7 +59,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ slug, id: doc.id, url: `/correspondence/${slug}` })
+    return NextResponse.json({ slug, id: doc.id, url: `/correspondence/${slug}`, leftToken, rightToken })
   } catch (err) {
     console.error('POST /api/correspondences:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

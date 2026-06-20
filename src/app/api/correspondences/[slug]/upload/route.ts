@@ -25,15 +25,22 @@ export async function POST(
 
     // Parse multipart form
     const formData = await req.formData()
-    const file = formData.get('file') as File | null
-    const side = formData.get('side') as string | null // 'left' or 'right'
+    const file       = formData.get('file')       as File | null
+    const token      = formData.get('token')      as string | null
     const themeIndex = parseInt(formData.get('themeIndex') as string || '0', 10)
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
-    if (side !== 'left' && side !== 'right') {
-      return NextResponse.json({ error: 'side must be "left" or "right"' }, { status: 400 })
+
+    // Derive side server-side from the token — never trust the client
+    let side: 'left' | 'right'
+    if (token && token === correspondence.leftToken) {
+      side = 'left'
+    } else if (token && token === correspondence.rightToken) {
+      side = 'right'
+    } else {
+      return NextResponse.json({ error: 'Invalid or missing token' }, { status: 403 })
     }
 
     // Convert File to Buffer for Payload upload

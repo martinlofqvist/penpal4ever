@@ -85,7 +85,11 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       },
     })
 
-    return NextResponse.json({ ok: true, penpalFirstName: updated.penpalFirstName })
+    return NextResponse.json({
+      ok: true,
+      penpalFirstName: updated.penpalFirstName,
+      rightToken: doc.rightToken ?? null,
+    })
   } catch (err) {
     console.error('PATCH /api/correspondences/[slug]:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

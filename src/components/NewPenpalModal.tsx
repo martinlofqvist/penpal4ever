@@ -23,7 +23,8 @@ export default function NewPenpalModal() {
   const [form,     setForm]     = useState<FormState>(EMPTY)
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
-  const [shareUrl, setShareUrl] = useState('')
+  const [shareUrl,   setShareUrl]   = useState('')
+  const [leftToken,  setLeftToken]  = useState('')
   const [copied,   setCopied]   = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteSent,  setInviteSent]  = useState(false)
@@ -88,16 +89,9 @@ export default function NewPenpalModal() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create correspondence')
 
-      const url = `${window.location.origin}/correspondence/${data.slug}`
-      setShareUrl(url)
-      // Mark this browser as the creator so the onboarding modal is suppressed
-      try {
-        const key = 'penpal4ever:created'
-        const existing: string[] = JSON.parse(localStorage.getItem(key) || '[]')
-        if (!existing.includes(data.slug)) existing.push(data.slug)
-        localStorage.setItem(key, JSON.stringify(existing))
-        localStorage.setItem(`penpal4ever:role:${data.slug}`, 'left')
-      } catch {}
+      // Share URL uses rightToken so the penpal lands on the right side
+      setShareUrl(`${window.location.origin}/correspondence/${data.slug}?token=${data.rightToken}`)
+      setLeftToken(data.leftToken)
       setFlipped(true)
     } catch (err: any) {
       setError(err.message || 'Something went wrong.')
@@ -261,7 +255,19 @@ export default function NewPenpalModal() {
                   <p className="share-back__invite-hint">Link copied — paste it into your message to {inviteEmail}.</p>
                 )}
 
-                <button className="share-back__done-btn" type="button" onClick={closeModal}>
+                <button
+                  className="share-back__done-btn"
+                  type="button"
+                  onClick={() => {
+                    closeModal()
+                    // Navigate creator to their token URL
+                    if (leftToken && shareUrl) {
+                      const penpalUrl = new URL(shareUrl)
+                      const slug = penpalUrl.pathname.split('/').pop()
+                      window.location.href = `/correspondence/${slug}?token=${leftToken}`
+                    }
+                  }}
+                >
                   DONE
                 </button>
               </div>

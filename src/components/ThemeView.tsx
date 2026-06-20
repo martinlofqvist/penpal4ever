@@ -45,10 +45,11 @@ interface UploadZoneProps {
   side: 'left' | 'right'
   themeIndex: number
   correspondenceSlug?: string
+  token?: string | null
   onUploaded?: (imageUrl: string) => void
 }
 
-function UploadZone({ side, themeIndex, correspondenceSlug, onUploaded }: UploadZoneProps) {
+function UploadZone({ side, themeIndex, correspondenceSlug, token, onUploaded }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
@@ -60,7 +61,7 @@ function UploadZone({ side, themeIndex, correspondenceSlug, onUploaded }: Upload
     try {
       const fd = new FormData()
       fd.append('file', file)
-      fd.append('side', side)
+      fd.append('token', token ?? '')
       fd.append('themeIndex', String(themeIndex))
       const res = await fetch(`/api/correspondences/${correspondenceSlug}/upload`, {
         method: 'POST',
@@ -145,9 +146,13 @@ interface ThemeViewProps {
   themeOrder?: number[]
   /** If true, show the penpal onboarding modal on first load */
   needsPenpal?: boolean
+  /** Side derived server-side from the token in the URL ('left' | 'right' | null) */
+  initialSide?: 'left' | 'right' | null
+  /** The raw token from the URL — passed to the upload API for server-side validation */
+  token?: string | null
 }
 
-export default function ThemeView({ correspondenceSlug, yourName, penpalName: penpalNameProp, themeOrder, needsPenpal = false }: ThemeViewProps = {}) {
+export default function ThemeView({ correspondenceSlug, yourName, penpalName: penpalNameProp, themeOrder, needsPenpal = false, initialSide = null, token = null }: ThemeViewProps = {}) {
   const themeById = useMemo(() => {
     const map = new Map<number, Theme>()
     for (const t of themesData.themes as Theme[]) map.set(t.id, t)
@@ -226,30 +231,18 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
     right.style.transform = ''
   }, [])
 
-  // ─── Init: localStorage role + onboarding + load responses ──
+  // ─── Init: side from token + onboarding + load responses ────
 
   useEffect(() => {
     if (!correspondenceSlug) return
 
-    // 1. Determine user side from localStorage
-    let side: 'left' | 'right' | null = null
-    try {
-      const stored = localStorage.getItem(`penpal4ever:role:${correspondenceSlug}`)
-      if (stored === 'left' || stored === 'right') side = stored
-    } catch {}
-    setUserSide(side)
+    // 1. Side is derived server-side from the token — use directly
+    setUserSide(initialSide)
 
-    // 2. Decide whether to show onboarding modal
-    if (needsPenpal) {
-      try {
-        const created: string[] = JSON.parse(localStorage.getItem('penpal4ever:created') || '[]')
-        // Only show if this browser did NOT create this correspondence
-        if (!created.includes(correspondenceSlug)) {
-          setShowOnboarding(true)
-        }
-      } catch {
-        setShowOnboarding(true)
-      }
+    // 2. Show onboarding if penpal hasn't registered yet and visitor has no token
+    //    (token=null means no recognised side — they must be the penpal arriving for the first time)
+    if (needsPenpal && initialSide === null) {
+      setShowOnboarding(true)
     }
 
     // 3. Debug mode via ?debug=true
@@ -264,7 +257,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         }
       })
       .catch(() => {})
-  }, [correspondenceSlug, needsPenpal])
+  }, [correspondenceSlug, needsPenpal, initialSide])
 
   // ─── Intro sequence ───────────────────────────────────
 
@@ -368,14 +361,14 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         <PenpalOnboardingModal
           correspondenceSlug={correspondenceSlug}
           yourName={yourName ?? ''}
-          onComplete={(name) => {
+          onComplete={(name, rightToken) => {
             setPenpalName(name.toUpperCase())
             setShowOnboarding(false)
-            // Mark this browser as the penpal (right side)
-            try {
-              localStorage.setItem(`penpal4ever:role:${correspondenceSlug}`, 'right')
-            } catch {}
             setUserSide('right')
+            // Put the rightToken in the URL so reloads retain identity
+            if (rightToken) {
+              window.history.replaceState(null, '', `?token=${rightToken}`)
+            }
           }}
         />
       )}
@@ -435,6 +428,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                       side="left"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
+                      token={token}
                       onUploaded={(url) => handleUploaded(leftUploadKey, url)}
                     />
                   )}
@@ -479,6 +473,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
                       side="right"
                       themeIndex={index}
                       correspondenceSlug={correspondenceSlug}
+                      token={token}
                       onUploaded={(url) => handleUploaded(rightUploadKey, url)}
                     />
                   )}
