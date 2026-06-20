@@ -47,7 +47,7 @@ interface UploadZoneProps {
   themeIndex: number
   correspondenceSlug?: string
   token?: string | null
-  onUploaded?: (imageUrl: string) => void
+  onUploaded?: (imageUrl: string | null) => void
 }
 
 function UploadZone({ side, themeIndex, correspondenceSlug, token, onUploaded }: UploadZoneProps) {
@@ -330,9 +330,22 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   }, [navigateTo, index])
 
   // ─── Uploaded image handler ───────────────────────────
+  // The upload API may return imageUrl=null even when the file is in Blob
+  // (the Vercel Blob plugin resolves the URL asynchronously in the DB).
+  // We immediately apply any URL we do get, then always re-fetch from the
+  // GET route — which uses depth:1 and reliably returns the Blob URL.
 
-  function handleUploaded(slot: string, url: string) {
-    setUploadedImages(prev => ({ ...prev, [slot]: url }))
+  function handleUploaded(slot: string, url: string | null) {
+    if (url) setUploadedImages(prev => ({ ...prev, [slot]: url }))
+    if (!correspondenceSlug) return
+    fetch(`/api/correspondences/${correspondenceSlug}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.images && typeof data.images === 'object') {
+          setUploadedImages(prev => ({ ...prev, ...data.images }))
+        }
+      })
+      .catch(() => {})
   }
 
   // ─── Render ───────────────────────────────────────────
