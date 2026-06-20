@@ -80,10 +80,16 @@ export async function POST(
       },
     })
 
-    // Vercel Blob populates .url; fall back to Payload's local file endpoint in dev
+    // Try every possible location for the URL, in priority order.
+    // Vercel Blob stores the full URL in .url; createdMedia may have it immediately
+    // on create; refetch is a safety net. Fall back to local file endpoint in dev.
     const imageUrl: string | null =
+      (createdMedia as any).url ??
       (media as any).url ??
+      ((createdMedia as any).filename ? `/api/media/file/${(createdMedia as any).filename}` : null) ??
       ((media as any).filename ? `/api/media/file/${(media as any).filename}` : null)
+
+    console.log('[upload] mediaId:', createdMedia.id, '| createdMedia.url:', (createdMedia as any).url, '| media.url:', (media as any).url, '| filename:', (media as any).filename, '| resolved imageUrl:', imageUrl)
 
     return NextResponse.json({
       success: true,
