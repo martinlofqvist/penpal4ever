@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import themesData from '@/data/themes.json'
 import PenpalOnboardingModal from '@/components/PenpalOnboardingModal'
+import CorrespondenceSettings from '@/components/CorrespondenceSettings'
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -150,9 +151,13 @@ interface ThemeViewProps {
   initialSide?: 'left' | 'right' | null
   /** The raw token from the URL — passed to the upload API for server-side validation */
   token?: string | null
+  leftShareUrl?: string
+  rightShareUrl?: string
+  limitThemes?: boolean
+  maxThemes?: number | null
 }
 
-export default function ThemeView({ correspondenceSlug, yourName, penpalName: penpalNameProp, themeOrder, needsPenpal = false, initialSide = null, token = null }: ThemeViewProps = {}) {
+export default function ThemeView({ correspondenceSlug, yourName, penpalName: penpalNameProp, themeOrder, needsPenpal = false, initialSide = null, token = null, leftShareUrl = '', rightShareUrl = '', limitThemes = false, maxThemes: maxThemesProp = null }: ThemeViewProps = {}) {
   const themeById = useMemo(() => {
     const map = new Map<number, Theme>()
     for (const t of themesData.themes as Theme[]) map.set(t.id, t)
@@ -191,6 +196,11 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
 
   // Debug mode — append ?debug=true to URL to always show nav buttons
   const [debugMode, setDebugMode] = useState(false)
+
+  // Settings panel
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [currentLimitThemes, setCurrentLimitThemes] = useState(limitThemes)
+  const [currentMaxThemes,   setCurrentMaxThemes]   = useState(maxThemesProp)
 
   // Refs for direct DOM animation
   const introBlockRef = useRef<HTMLDivElement>(null)
@@ -495,6 +505,21 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         {/* Header overlay */}
         <header ref={ctHeaderRef} className="ct-header">
 
+          {/* Settings button — top right corner */}
+          {correspondenceSlug && (
+            <button
+              className="settings-btn"
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Open settings"
+              type="button"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M9 1.5V3M9 15v1.5M1.5 9H3M15 9h1.5M3.697 3.697l1.06 1.06M13.243 13.243l1.06 1.06M3.697 14.303l1.06-1.06M13.243 4.757l1.06-1.06" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          )}
+
           {/* Prev button — left side, vertically centred with text block */}
           <div className="ct-header__side ct-header__side--left">
             {hasPrev && (
@@ -542,6 +567,26 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         </header>
 
       </div>
+
+      {/* ─── Settings ─── */}
+      {settingsOpen && correspondenceSlug && (
+        <CorrespondenceSettings
+          correspondenceSlug={correspondenceSlug}
+          yourName={leftName}
+          penpalName={rightName}
+          leftShareUrl={leftShareUrl}
+          rightShareUrl={rightShareUrl}
+          userSide={userSide}
+          token={token}
+          initialLimitThemes={currentLimitThemes}
+          initialMaxThemes={currentMaxThemes}
+          onClose={() => setSettingsOpen(false)}
+          onThemesUpdated={(limit, max) => {
+            setCurrentLimitThemes(limit)
+            setCurrentMaxThemes(max)
+          }}
+        />
+      )}
 
       {/* ─── Lightbox ─── */}
       {lightboxUrl && (

@@ -1463,6 +1463,107 @@ html, body {
 
 .start-back:hover { color: var(--color-black); }
 
+/* ─── Share link blocks (new Figma design) ─── */
+
+.share-heading {
+  font-size: clamp(1.4rem, 2.5vw, 2.4rem);
+  margin-bottom: 2rem;
+}
+
+.share-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.share-link-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.share-link-label {
+  font-family: var(--font-primary);
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.share-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.share-link-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75em 1em;
+  border: 1.5px solid var(--color-black);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.share-link-url {
+  font-family: var(--font-primary);
+  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+  color: #7b7b7b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.share-link-copy {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-black);
+  transition: opacity 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+
+.share-link-copy:hover { opacity: 0.6; }
+
+.share-link-copy.is-copied { color: #22a06b; }
+
+.share-link-hint {
+  font-family: 'Swiss 721 Extended', 'Arial Nova', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(0.65rem, 0.85vw, 0.78rem);
+  line-height: 1.45;
+  color: #7b7b7b;
+  margin: 0;
+}
+
+.share-start-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.85em 2em;
+  border-radius: 38px;
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-primary);
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.share-start-btn:hover { opacity: 0.8; }
+
 /* ─── Right panel ─── */
 
 .start-right {

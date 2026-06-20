@@ -3,6 +3,23 @@
 import { useRef, useState } from 'react'
 import Link from 'next/link'
 
+function CopyIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
 type Phase = 'form' | 'loading' | 'share'
 
 export default function StartPage() {
@@ -14,9 +31,9 @@ export default function StartPage() {
   const [shareUrl,    setShareUrl]    = useState('')
   const [slug,        setSlug]        = useState('')
   const [leftToken,   setLeftToken]   = useState('')
+  const [ownUrl,      setOwnUrl]      = useState('')
   const [copied,      setCopied]      = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteSent,  setInviteSent]  = useState(false)
+  const [copiedOwn,   setCopiedOwn]   = useState(false)
   const nameRef = useRef<HTMLInputElement>(null)
 
   const isInfinite  = maxThemes === 11
@@ -42,6 +59,7 @@ export default function StartPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
       setShareUrl(`${window.location.origin}/correspondence/${data.slug}?token=${data.rightToken}`)
+      setOwnUrl(`${window.location.origin}/correspondence/${data.slug}?token=${data.leftToken}`)
       setSlug(data.slug)
       setLeftToken(data.leftToken)
       // Redirect the creator to their token URL so they're recognised as left side
@@ -59,11 +77,10 @@ export default function StartPage() {
     setTimeout(() => setCopied(false), 2500)
   }
 
-  function handleInvite() {
-    if (!inviteEmail.trim()) return
-    navigator.clipboard.writeText(shareUrl).catch(() => {})
-    setInviteSent(true)
-    setTimeout(() => { setInviteSent(false); setInviteEmail('') }, 2500)
+  async function copyOwnLink() {
+    await navigator.clipboard.writeText(ownUrl).catch(() => {})
+    setCopiedOwn(true)
+    setTimeout(() => setCopiedOwn(false), 2500)
   }
 
   const isShare = phase === 'share'
@@ -122,10 +139,56 @@ export default function StartPage() {
 
           {/* SHARE STATE */}
           <div className="start-panel start-panel--share">
-            <h1 className="start-heading">YOUR CORRESPON-<br />DENCE IS READY</h1>
-            <p className="start-sub">Share the link with your penpal to begin.</p>
-            <Link href={`/correspondence/${slug}?token=${leftToken}`} className="start-open-btn">
-              OPEN CORRESPONDENCE →
+            <h1 className="start-heading share-heading">
+              {name.trim().toUpperCase()}, YOUR CONVERSATION IS READY TO BE SHARED
+            </h1>
+
+            <div className="share-links">
+              {/* Own link */}
+              <div className="share-link-block">
+                <p className="share-link-label">YOUR CONVERSATION LINK</p>
+                <div className="share-link-row">
+                  <div className="share-link-input">
+                    <span className="share-link-url">{ownUrl}</span>
+                  </div>
+                  <button
+                    className={`share-link-copy${copiedOwn ? ' is-copied' : ''}`}
+                    onClick={copyOwnLink}
+                    type="button"
+                    title="Copy your link"
+                  >
+                    {copiedOwn ? <CheckIcon /> : <CopyIcon />}
+                  </button>
+                </div>
+                <p className="share-link-hint">
+                  This is <strong>your</strong> link, it takes you right back to your side of the conversation.
+                </p>
+              </div>
+
+              {/* Penpal link */}
+              <div className="share-link-block">
+                <p className="share-link-label">YOUR PENPAL'S LINK – SHARE THIS</p>
+                <div className="share-link-row">
+                  <div className="share-link-input">
+                    <span className="share-link-url">{shareUrl}</span>
+                  </div>
+                  <button
+                    className={`share-link-copy${copied ? ' is-copied' : ''}`}
+                    onClick={copyLink}
+                    type="button"
+                    title="Copy penpal link"
+                  >
+                    {copied ? <CheckIcon /> : <CopyIcon />}
+                  </button>
+                </div>
+                <p className="share-link-hint">
+                  This link is for your penpal. Anyone with it can join as your pen pal — no account needed. Once they open it, your correspondence begins.
+                </p>
+              </div>
+            </div>
+
+            <Link href={`/correspondence/${slug}?token=${leftToken}`} className="share-start-btn">
+              START CONVERSATION
             </Link>
           </div>
 
@@ -134,51 +197,7 @@ export default function StartPage() {
 
       {/* ── RIGHT PANEL ── */}
       <div className="start-right">
-
-        {/* Placeholder image */}
         <div className={`start-right__bg${isShare ? ' is-faded' : ''}`} />
-
-        {/* Share panel */}
-        <div className={`start-right__share${isShare ? ' is-visible' : ''}`}>
-          <p className="share-back__title">YOUR LINK</p>
-          <p className="start-right__url" aria-live="polite">{shareUrl}</p>
-
-          <button
-            className={`share-back__copy-btn${copied ? ' is-copied' : ''}`}
-            onClick={copyLink}
-            type="button"
-          >
-            {copied ? '✓ COPIED' : 'COPY LINK'}
-          </button>
-
-          <div className="share-back__divider" />
-
-          <p className="share-back__invite-label">INVITE YOUR PENPAL</p>
-          <div className="share-back__invite-row">
-            <input
-              className="share-back__invite-input"
-              type="email"
-              placeholder="penpal@example.com"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleInvite() }}
-            />
-            <button
-              className={`share-back__invite-btn${inviteSent ? ' is-sent' : ''}`}
-              type="button"
-              onClick={handleInvite}
-              disabled={!inviteEmail.trim() || inviteSent}
-            >
-              {inviteSent ? '✓ SENT' : 'INVITE'}
-            </button>
-          </div>
-          {inviteSent && (
-            <p className="share-back__invite-hint">
-              Link copied — paste it into your message to {inviteEmail}.
-            </p>
-          )}
-        </div>
-
       </div>
     </div>
   )

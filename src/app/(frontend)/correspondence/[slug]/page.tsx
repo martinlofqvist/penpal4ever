@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import ThemeView from '@/components/ThemeView'
-import PenpalOnboardingModal from '@/components/PenpalOnboardingModal'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -41,6 +40,11 @@ export default async function CorrespondencePage({ params, searchParams }: Props
     else if (token === c.rightToken) initialSide = 'right'
   }
 
+  // Build share URLs server-side so tokens are never directly exposed as props
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  const leftShareUrl  = `${origin}/correspondence/${slug}?token=${c.leftToken ?? ''}`
+  const rightShareUrl = `${origin}/correspondence/${slug}?token=${c.rightToken ?? ''}`
+
   return (
     <div className="theme-page">
       <ThemeView
@@ -51,6 +55,10 @@ export default async function CorrespondencePage({ params, searchParams }: Props
         needsPenpal={needsPenpal}
         initialSide={initialSide}
         token={token ?? null}
+        leftShareUrl={leftShareUrl}
+        rightShareUrl={rightShareUrl}
+        limitThemes={!!c.limitThemes}
+        maxThemes={c.maxThemes ?? null}
       />
     </div>
   )
