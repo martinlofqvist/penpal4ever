@@ -29,9 +29,9 @@ export default function HomePage() {
 
       {/* Copy */}
       <main className="home-copy">
-        <p>A visual conversation between two friends, built around a shared theme.</p>
-        <p>A new theme arrives when both of you have responded to the last one. You respond with an image. So do they. No explanations, no scores, no feed to scroll past it.</p>
-        <p>Just a structure for staying creative with someone you care about, one image at a time.</p>
+        <p>A visual conversation between two friends. Built around a shared theme — nothing more, nothing less.</p>
+        <p>When you&apos;ve both replied, a new one arrives. You respond with an image. So do they. There are no explanations required, no scores to compare. No feed pulling you somewhere else.</p>
+        <p>Only a small, considered reason to remain creative with someone whose taste you trust.</p>
       </main>
 
       {/* Footer */}
