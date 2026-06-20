@@ -1187,7 +1187,7 @@ html, body {
   z-index: 0;
 }
 
-.barn-door__bg-image--clickable {
+.barn-door--has-image {
   cursor: zoom-in;
 }
 

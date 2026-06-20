@@ -408,14 +408,17 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         <div className="barn-wrap">
 
           {/* ── Left door ── */}
-          <div ref={doorLeftRef} className="barn-door barn-door--left">
+          <div
+            ref={doorLeftRef}
+            className={`barn-door barn-door--left${leftImageSrc ? ' barn-door--has-image' : ''}`}
+            onClick={leftImageSrc ? () => setLightboxUrl(leftImageSrc) : undefined}
+          >
             {leftImageSrc ? (
               <>
                 <img
-                  className="barn-door__bg-image barn-door__bg-image--clickable"
+                  className="barn-door__bg-image"
                   src={leftImageSrc}
                   alt={theme.left?.caption ?? ''}
-                  onClick={() => setLightboxUrl(leftImageSrc)}
                 />
                 <div className="contributor contributor--overlay">
                   <h3 className="contributor__name">{leftName}</h3>
@@ -449,14 +452,17 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           </div>
 
           {/* ── Right door ── */}
-          <div ref={doorRightRef} className="barn-door barn-door--right">
+          <div
+            ref={doorRightRef}
+            className={`barn-door barn-door--right${rightImageSrc ? ' barn-door--has-image' : ''}`}
+            onClick={rightImageSrc ? () => setLightboxUrl(rightImageSrc) : undefined}
+          >
             {rightImageSrc ? (
               <>
                 <img
-                  className="barn-door__bg-image barn-door__bg-image--clickable"
+                  className="barn-door__bg-image"
                   src={rightImageSrc}
                   alt={theme.right?.caption ?? ''}
-                  onClick={() => setLightboxUrl(rightImageSrc)}
                 />
                 <div className="contributor contributor--overlay">
                   <h3 className="contributor__name">{rightName}</h3>
