@@ -1,6 +1,7 @@
 import * as migration_20260616_154711 from './20260616_154711';
 import * as migration_20260616_163006 from './20260616_163006';
 import * as migration_20260620_add_tokens from './20260620_add_tokens';
+import * as migration_20260620_add_theme_fields from './20260620_add_theme_fields';
 
 export const migrations = [
   {
@@ -17,5 +18,10 @@ export const migrations = [
     up: migration_20260620_add_tokens.up,
     down: migration_20260620_add_tokens.down,
     name: '20260620_add_tokens',
+  },
+  {
+    up: migration_20260620_add_theme_fields.up,
+    down: migration_20260620_add_theme_fields.down,
+    name: '20260620_add_theme_fields',
   },
 ];

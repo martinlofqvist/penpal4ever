@@ -306,10 +306,6 @@ html, body {
    MODAL
    ════════════════════════════════════════ */
 
-/* ════════════════════════════════════════
-   MODAL
-   ════════════════════════════════════════ */
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1050,28 +1046,12 @@ html, body {
   flex-shrink: 0;
 }
 
-.contributor__frame {
-  height: 52.95vh;
-  aspect-ratio: 480 / 520;
-  flex-shrink: 0;
-  background: var(--color-white);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
 .contributor__image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.contributor__image--clickable {
-  cursor: zoom-in;
 }
 
 .contributor__caption {
@@ -1151,13 +1131,6 @@ html, body {
   opacity: 0.4;
 }
 
-/* Empty placeholder shown when the other person hasn't uploaded yet */
-.upload-zone--empty {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
 .upload-zone__spinner {
   width: clamp(2rem, 4vw, 3rem);
   height: clamp(2rem, 4vw, 3rem);
@@ -1182,10 +1155,6 @@ html, body {
   object-fit: cover;
   display: block;
   z-index: 0;
-}
-
-.barn-door--has-image {
-  cursor: zoom-in;
 }
 
 /* When image fills the door, the contributor text overlays on top */
@@ -1258,7 +1227,7 @@ html, body {
   align-items: center;
   gap: 3px;
   padding: 0.65rem 0.85rem;
-  background: rgba(255, 255, 255, 0.92);
+  background: transparent;
   border: none;
   cursor: pointer;
   flex-shrink: 0;
@@ -1266,7 +1235,7 @@ html, body {
 }
 
 .barn-door__menu-trigger:hover {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .barn-door__menu-trigger span {
@@ -1660,36 +1629,6 @@ html, body {
 
 .start-right__bg.is-faded {
   opacity: 0;
-}
-
-/* Share overlay */
-.start-right__share {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 8vh 9%;
-  background: var(--color-white);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease 0.2s;
-}
-
-.start-right__share.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.start-right__url {
-  font-family: var(--font-primary);
-  font-size: clamp(1.2rem, 2.4vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  word-break: break-all;
-  color: var(--color-black);
-  margin-bottom: 1.25rem;
 }
 
 /* ─── Lightbox ─── */
