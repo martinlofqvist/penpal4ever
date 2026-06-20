@@ -1,0 +1,30 @@
+{
+  "columns": 1,
+  "baseSize": 208,
+  "imageMargin": 38,
+  "columnGap": 6,
+  "xOffset": -221,
+  "scrollSpeed": 55,
+  "sineAmplitude": 67,
+  "sineSpeed": 0.23,
+  "columnPhaseOffset": 2.094,
+  "itemPhaseOffset": 0.65,
+  "flipSpeed": 0.63,
+  "flipPhaseSpread": 6.28,
+  "perspective": 500,
+  "borderRadius": 9,
+  "backgroundColor": "#ffffff",
+  "mediaFiles": [
+    "/animation/media/01.png",
+    "/animation/media/02.png",
+    "/animation/media/03.png",
+    "/animation/media/04.png",
+    "/animation/media/05.png",
+    "/animation/media/06.png",
+    "/animation/media/07.png",
+    "/animation/media/08.png",
+    "/animation/media/09.png"
+  ],
+  "fallbackColor": "#888888",
+  "fallbackOpacity": 0.55
+}

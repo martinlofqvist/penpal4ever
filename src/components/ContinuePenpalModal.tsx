@@ -63,7 +63,7 @@ export default function ContinuePenpalModal() {
   return (
     <>
       <a href="#" className="btn btn--secondary" onClick={openModal}>
-        CONTINUE
+        CONTINUE PENPAL
       </a>
 
       {typeof document !== 'undefined' && createPortal(

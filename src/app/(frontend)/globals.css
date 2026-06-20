@@ -138,14 +138,24 @@ html, body {
 
 .home-buttons {
   position: absolute;
-  inset: 0;
+  left: 26%;
+  top: 39.6%;
+  width: 39%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2.5vw;
-  padding-left: 10%;
-  padding-bottom: 12vh; /* shift to ~44% from top, matching Figma */
+  gap: 10.9vh;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.home-buttons > * {
+  pointer-events: auto;
+}
+
+.home-buttons > .btn {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ─── Headline ─── */
@@ -154,8 +164,8 @@ html, body {
   position: absolute;
   left: 3.2%;
   top: 3.7%;
-  width: 95.6%;
   pointer-events: none;
+  overflow: visible;
 }
 
 .home-eyebrow {
@@ -169,10 +179,10 @@ html, body {
 
 .home-title {
   font-family: var(--font-primary);
-  font-size: clamp(3.5rem, 8.9vw, 10rem);
+  font-size: 9.6vw;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -230,7 +240,7 @@ html, body {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
-  border-radius: 9999px;
+  border-radius: 8px;
   padding: 0.85em 2em;
   cursor: pointer;
   transition: opacity 150ms ease;
@@ -1295,6 +1305,8 @@ html, body {
   flex-direction: column;
   justify-content: center;
   padding: 6vh 5.5% 6vh 5.5%;
+  position: relative;
+  z-index: 10;
   overflow: hidden;
   position: relative;
 }
@@ -1618,20 +1630,16 @@ html, body {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background: #e0e0e0;
+  transition: opacity 0.5s ease;
 }
 
-/* Background image */
-.start-right__bg {
+.start-right.is-faded {
+  opacity: 0;
+}
+
+.start-right__animation {
   position: absolute;
   inset: 0;
-  background: url('/start-bg.jpeg') center center / cover no-repeat;
-  transition: opacity 0.5s ease;
-  opacity: 1;
-}
-
-.start-right__bg.is-faded {
-  opacity: 0;
 }
 
 /* ─── Lightbox ─── */

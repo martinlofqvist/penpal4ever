@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Link from 'next/link'
+import GridAnimation from '@/components/GridAnimation'
 
 function CopyIcon() {
   return (
@@ -196,8 +197,8 @@ export default function StartPage() {
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      <div className="start-right">
-        <div className={`start-right__bg${isShare ? ' is-faded' : ''}`} />
+      <div className={`start-right${isShare ? ' is-faded' : ''}`}>
+        <GridAnimation className="start-right__animation" />
       </div>
     </div>
   )
