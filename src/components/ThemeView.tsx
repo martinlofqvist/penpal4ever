@@ -208,10 +208,11 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
   const [currentMaxThemes,   setCurrentMaxThemes]   = useState(maxThemesProp)
 
   // Refs for direct DOM animation
-  const introBlockRef = useRef<HTMLDivElement>(null)
-  const ctHeaderRef   = useRef<HTMLElement>(null)
-  const doorLeftRef   = useRef<HTMLDivElement>(null)
-  const doorRightRef  = useRef<HTMLDivElement>(null)
+  const introBlockRef    = useRef<HTMLDivElement>(null)
+  const ctHeaderRef      = useRef<HTMLElement>(null)
+  const ctHeaderCenterRef = useRef<HTMLDivElement>(null)
+  const doorLeftRef      = useRef<HTMLDivElement>(null)
+  const doorRightRef     = useRef<HTMLDivElement>(null)
 
   // ─── Door helpers ─────────────────────────────────────
 
@@ -302,10 +303,10 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
     const run = async () => {
       await sleep(INTRO_HOLD_MS)
 
-      if (introBlockRef.current && ctHeaderRef.current) {
+      if (introBlockRef.current && ctHeaderCenterRef.current) {
         const blockRect  = introBlockRef.current.getBoundingClientRect()
-        const headerRect = ctHeaderRef.current.getBoundingClientRect()
-        const delta      = headerRect.top - blockRect.top
+        const centerRect = ctHeaderCenterRef.current.getBoundingClientRect()
+        const delta      = centerRect.top - blockRect.top
         setFlyOffset(`translateY(${delta}px)`)
       }
 
@@ -693,7 +694,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
           </div>
 
           {/* Centre: label + title + done badge */}
-          <div className="ct-header__center">
+          <div ref={ctHeaderCenterRef} className="ct-header__center">
             <p className="theme-label">
               <span className="theme-label__the-num"><span>THE</span><span className="label-ordinal" style={headerStyle}>{ordinal}</span></span>
               <span>THEME</span>
