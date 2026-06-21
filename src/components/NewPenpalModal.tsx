@@ -34,7 +34,7 @@ export default function NewPenpalModal() {
   const firstInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    fetch('/api/themes/categories')
+    fetch('/api/theme-categories')
       .then((r) => r.json())
       .then((data) => { if (data.categories) setCategories(data.categories) })
       .catch(() => {})
