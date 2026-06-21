@@ -260,7 +260,26 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
       setShowOnboarding(true)
     }
 
-    // 3. Debug mode via ?debug=true
+    // 3. Save this correspondence to localStorage so the user can find it later
+    if (initialSide && token) {
+      try {
+        const LS_KEY = 'penpal4ever_conversations'
+        const stored = JSON.parse(localStorage.getItem(LS_KEY) ?? '[]') as Array<{
+          slug: string; token: string; yourName: string; penpalName: string; visitedAt: string
+        }>
+        const filtered = stored.filter((c) => c.slug !== correspondenceSlug)
+        filtered.unshift({
+          slug:       correspondenceSlug,
+          token:      token,
+          yourName:   yourName ?? '',
+          penpalName: penpalNameProp ?? '',
+          visitedAt:  new Date().toISOString(),
+        })
+        localStorage.setItem(LS_KEY, JSON.stringify(filtered.slice(0, 20)))
+      } catch { /* localStorage unavailable */ }
+    }
+
+    // 4. Debug mode via ?debug=true
     setDebugMode(new URLSearchParams(window.location.search).get('debug') === 'true')
 
     // 4. Load existing uploaded images from the server

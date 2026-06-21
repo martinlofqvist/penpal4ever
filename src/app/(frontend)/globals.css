@@ -1926,6 +1926,92 @@ body:not(:has(.conversations-page)) {
 }
 
 /* ════════════════════════════════════════
+   CONTINUE PENPAL MODAL — saved conversations
+   ════════════════════════════════════════ */
+
+.continue-saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.continue-saved-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: #f7f7f7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.continue-saved-row:hover {
+  background: #efefef;
+}
+
+.continue-saved-avatars {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.continue-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-black);
+  flex-shrink: 0;
+}
+
+.continue-avatar--you {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-black);
+  z-index: 1;
+  margin-right: -6px;
+}
+
+.continue-avatar--penpal {
+  background: #cccccc;
+}
+
+.continue-saved-name {
+  font-family: var(--font-primary);
+  font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-black);
+}
+
+.continue-find-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-primary);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #999;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+  text-align: left;
+}
+
+.continue-find-link:hover {
+  color: var(--color-black);
+}
+
+/* ════════════════════════════════════════
    ALL YOUR CONVERSATIONS PAGE
    ════════════════════════════════════════ */
 
