@@ -15,18 +15,18 @@ export async function GET() {
   try {
     const payload = await getPayload({ config })
 
-    // Fetch all themes (just the category field) and extract distinct values
+    // Fetch all themes and extract distinct category values
     const { docs } = await payload.find({
       collection: 'themes',
       limit: 10000,
-      select: { category: true } as any,
+      depth: 0,
     })
 
     const seen = new Set<string>()
     const categories: { value: string; label: string }[] = []
 
     for (const doc of docs) {
-      const val = (doc as any).category as string | undefined
+      const val = doc.category as string | undefined
       if (val && !seen.has(val)) {
         seen.add(val)
         categories.push({ value: val, label: toLabel(val) })

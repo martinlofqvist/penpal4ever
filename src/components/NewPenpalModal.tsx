@@ -189,22 +189,20 @@ export default function NewPenpalModal() {
                   </div>
 
                   {/* THEME CATEGORY */}
-                  {categories.length > 0 && (
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="inp-theme-category">THEME CATEGORY</label>
-                      <select
-                        className="form-input"
-                        id="inp-theme-category"
-                        value={form.themeCategory}
-                        onChange={(e) => setForm(prev => ({ ...prev, themeCategory: e.target.value }))}
-                      >
-                        <option value="all">All categories</option>
-                        {categories.map((cat) => (
-                          <option key={cat.value} value={cat.value}>{cat.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="inp-theme-category">THEME CATEGORY</label>
+                    <select
+                      className="form-input"
+                      id="inp-theme-category"
+                      value={form.themeCategory}
+                      onChange={(e) => setForm(prev => ({ ...prev, themeCategory: e.target.value }))}
+                    >
+                      <option value="all">All categories</option>
+                      {categories.map((cat) => (
+                        <option key={cat.value} value={cat.value}>{cat.label}</option>
+                      ))}
+                    </select>
+                  </div>
 
                   {/* THEMES slider */}
                   <div className="form-group themes-slider-group">
