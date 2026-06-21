@@ -19,15 +19,25 @@ export async function POST(req: NextRequest) {
     const {
       yourFirstName, yourLastName, yourEmail,
       penpalFirstName, penpalLastName, penpalEmail,
-      limitThemes, maxThemes,
+      limitThemes, maxThemes, themeCategory,
     } = body
 
     if (!yourFirstName) {
       return NextResponse.json({ error: 'Your first name is required' }, { status: 400 })
     }
 
-    // Fetch all themes and build a shuffled order (persisted so both parties see the same sequence)
-    const { docs: allThemes } = await payload.find({ collection: 'themes', limit: 1000, sort: 'id' })
+    // Fetch themes, optionally filtered by category
+    const categoryFilter =
+      themeCategory && themeCategory !== 'all'
+        ? { where: { category: { equals: themeCategory } } }
+        : {}
+
+    const { docs: allThemes } = await payload.find({
+      collection: 'themes',
+      limit: 10000,
+      sort: 'id',
+      ...categoryFilter,
+    })
     const ids = allThemes.map((t) => Number(t.id))
     // Fisher-Yates shuffle
     for (let i = ids.length - 1; i > 0; i--) {

@@ -4,17 +4,19 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 interface FormState {
-  yourFirstName: string
-  yourLastName:  string
-  yourEmail:     string
-  maxThemes:     number
+  yourFirstName:  string
+  yourLastName:   string
+  yourEmail:      string
+  maxThemes:      number
+  themeCategory:  string
 }
 
 const EMPTY: FormState = {
-  yourFirstName: '',
-  yourLastName:  '',
-  yourEmail:     '',
-  maxThemes:     6,
+  yourFirstName:  '',
+  yourLastName:   '',
+  yourEmail:      '',
+  maxThemes:      6,
+  themeCategory:  'all',
 }
 
 export default function NewPenpalModal() {
@@ -25,10 +27,18 @@ export default function NewPenpalModal() {
   const [error,    setError]    = useState('')
   const [shareUrl,   setShareUrl]   = useState('')
   const [leftToken,  setLeftToken]  = useState('')
-  const [copied,   setCopied]   = useState(false)
+  const [copied,      setCopied]      = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteSent,  setInviteSent]  = useState(false)
+  const [categories,  setCategories]  = useState<{ value: string; label: string }[]>([])
   const firstInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    fetch('/api/themes/categories')
+      .then((r) => r.json())
+      .then((data) => { if (data.categories) setCategories(data.categories) })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (isOpen && !flipped) firstInputRef.current?.focus()
@@ -79,11 +89,12 @@ export default function NewPenpalModal() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          yourFirstName: form.yourFirstName,
-          yourLastName:  form.yourLastName,
-          yourEmail:     form.yourEmail,
-          limitThemes:   !isInfinite,
-          maxThemes:     isInfinite ? null : String(form.maxThemes),
+          yourFirstName:  form.yourFirstName,
+          yourLastName:   form.yourLastName,
+          yourEmail:      form.yourEmail,
+          limitThemes:    !isInfinite,
+          maxThemes:      isInfinite ? null : String(form.maxThemes),
+          themeCategory:  form.themeCategory,
         }),
       })
       const data = await res.json()
@@ -176,6 +187,24 @@ export default function NewPenpalModal() {
                         value={form.yourEmail} onChange={set('yourEmail')} />
                     </div>
                   </div>
+
+                  {/* THEME CATEGORY */}
+                  {categories.length > 0 && (
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="inp-theme-category">THEME CATEGORY</label>
+                      <select
+                        className="form-input"
+                        id="inp-theme-category"
+                        value={form.themeCategory}
+                        onChange={(e) => setForm(prev => ({ ...prev, themeCategory: e.target.value }))}
+                      >
+                        <option value="all">All categories</option>
+                        {categories.map((cat) => (
+                          <option key={cat.value} value={cat.value}>{cat.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   {/* THEMES slider */}
                   <div className="form-group themes-slider-group">

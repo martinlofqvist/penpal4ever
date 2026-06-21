@@ -29,7 +29,11 @@ async function main() {
 
     await payload.create({
       collection: 'themes',
-      data: { title: theme.title },
+      data: {
+        title: theme.title,
+        ...('category' in theme && { category: theme.category }),
+        ...('language' in theme && { language: theme.language }),
+      },
     })
 
     console.log(`  + created: ${theme.title}`)
