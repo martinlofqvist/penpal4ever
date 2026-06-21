@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { THEME_CATEGORIES } from '../lib/themeCategories'
 
 interface FormState {
   yourFirstName:  string
@@ -30,15 +31,7 @@ export default function NewPenpalModal() {
   const [copied,      setCopied]      = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteSent,  setInviteSent]  = useState(false)
-  const [categories,  setCategories]  = useState<{ value: string; label: string }[]>([])
   const firstInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    fetch('/api/theme-categories')
-      .then((r) => r.json())
-      .then((data) => { if (data.categories) setCategories(data.categories) })
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
     if (isOpen && !flipped) firstInputRef.current?.focus()
@@ -198,7 +191,7 @@ export default function NewPenpalModal() {
                       onChange={(e) => setForm(prev => ({ ...prev, themeCategory: e.target.value }))}
                     >
                       <option value="all">All categories</option>
-                      {categories.map((cat) => (
+                      {THEME_CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>{cat.label}</option>
                       ))}
                     </select>
