@@ -1,44 +1,8 @@
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
-function toLabel(value: string): string {
-  return value
-    .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
-}
+import { THEME_CATEGORIES } from '../../../../lib/themeCategories'
 
 // GET /api/themes/categories
-// Returns all distinct categories that have at least one theme in the DB.
+// Returns all defined theme categories from the shared config.
 export async function GET() {
-  try {
-    const payload = await getPayload({ config })
-
-    // Fetch all themes and extract distinct category values
-    const { docs } = await payload.find({
-      collection: 'themes',
-      limit: 10000,
-      depth: 0,
-    })
-
-    const seen = new Set<string>()
-    const categories: { value: string; label: string }[] = []
-
-    for (const doc of docs) {
-      const val = doc.category as string | undefined
-      if (val && !seen.has(val)) {
-        seen.add(val)
-        categories.push({ value: val, label: toLabel(val) })
-      }
-    }
-
-    // Sort alphabetically by label
-    categories.sort((a, b) => a.label.localeCompare(b.label))
-
-    return NextResponse.json({ categories })
-  } catch (err) {
-    console.error('GET /api/themes/categories:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+  return NextResponse.json({ categories: THEME_CATEGORIES })
 }

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { THEME_CATEGORIES } from '../lib/themeCategories'
 
 export const Themes: CollectionConfig = {
   slug: 'themes',
@@ -24,17 +25,7 @@ export const Themes: CollectionConfig = {
       type: 'select',
       required: true,
       defaultValue: 'poetic',
-      options: [
-        { label: 'Poetic',   value: 'poetic'   },
-        { label: 'Nature',   value: 'nature'   },
-        { label: 'Abstract', value: 'abstract' },
-        { label: 'Urban',    value: 'urban'    },
-        { label: 'Seasonal',     value: 'seasonal'     },
-        { label: 'Nonsensical',  value: 'nonsensical'  },
-        { label: 'Patriot Tech', value: 'patriot_tech' },
-        { label: 'Influencer',   value: 'influencer'   },
-        { label: 'New Me',       value: 'new_me'       },
-      ],
+      options: THEME_CATEGORIES,
     },
     {
       name: 'language',
