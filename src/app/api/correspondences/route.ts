@@ -93,11 +93,11 @@ export async function GET(req: NextRequest) {
             { penpalEmail: { equals: email } },
           ],
         },
-        limit: 1,
+        limit: 100,
         sort: '-createdAt',
       })
       if (!docs.length) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-      return NextResponse.json(docs[0])
+      return NextResponse.json(docs)
     }
 
     if (slug) {

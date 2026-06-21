@@ -41,19 +41,7 @@ export default function ContinuePenpalModal() {
     setLoading(true)
 
     try {
-      // Determine if it looks like an email or a slug
-      const isEmail = val.includes('@')
-      const param = isEmail ? `email=${encodeURIComponent(val)}` : `slug=${encodeURIComponent(val)}`
-      const res = await fetch(`/api/correspondences?${param}`)
-      const data = await res.json()
-
-      if (!res.ok || data.error) {
-        setError('No correspondence found. Check your email or session ID.')
-        setLoading(false)
-        return
-      }
-
-      router.push(`/correspondence/${data.slug}`)
+      router.push(`/conversations?email=${encodeURIComponent(val)}`)
     } catch {
       setError('Something went wrong. Please try again.')
       setLoading(false)
@@ -83,19 +71,19 @@ export default function ContinuePenpalModal() {
 
           <div className="modal__intro">
             <h2 className="modal__title" id="continue-modal-title">CONTINUE PENPAL</h2>
-            <p className="modal__subtitle">Enter your email or session ID to pick up where you left off</p>
+            <p className="modal__subtitle">Enter the email you used to start your conversation</p>
           </div>
 
           <form className="modal__body" onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label className="form-label" htmlFor="inp-continue-query">Email or Session ID</label>
+              <label className="form-label" htmlFor="inp-continue-query">Your email</label>
               <input
                 ref={inputRef}
                 className="form-input"
                 id="inp-continue-query"
-                type="text"
-                placeholder="you@example.com or a1b2c3d4e5"
-                autoComplete="off"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
                 required
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
