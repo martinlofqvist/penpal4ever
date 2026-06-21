@@ -480,7 +480,7 @@ export default function ThemeView({ correspondenceSlug, yourName, penpalName: pe
         ].join(' ').trim()}>
           <div
             ref={introBlockRef}
-            className={`intro__block${introPhase === 'flying' ? ' is-flying' : ''}`}
+            className={`intro__block${(introPhase === 'flying' || introPhase === 'gone') ? ' is-flying' : ''}`}
             style={{ '--intro-fly-offset': flyOffset } as React.CSSProperties}
           >
             <p className="theme-label">
