@@ -64,6 +64,12 @@ The archive grows one theme at a time. Eventually the full list becomes its own 
 
 ---
 
+## Owner tools
+
+These pages exist for Martin's use only and are not linked from anywhere in the app.
+
+- `/admin/all-conversations` — lists every correspondence in the database, sorted by newest. Password-protected via `ADMIN_PASSWORD` env var (httpOnly cookie session, 8 hours). Set the password in `.env` locally and in the Vercel environment variables dashboard — never commit it.
+
 ## Theme tonality reference
 
 The themes copy take inspiration from Joshua Idehen, Patti Smith, Fiona Apple, Pet Shop Boys, Charles Bukowski and Fantastic Man. They are witty, carries double meaning, can be interpreted in many ways and are suited for creative exploration. 
