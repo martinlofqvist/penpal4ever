@@ -40,7 +40,7 @@ declare global {
 
 export default function GridAnimation({ config, className }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const instanceRef  = useRef<ReturnType<Window['GridAnimation']> | null>(null)
+  const instanceRef  = useRef<InstanceType<Window['GridAnimation']> | null>(null)
   // Always hold the latest config so async script onload sees current values
   const configRef    = useRef(config)
   useEffect(() => { configRef.current = config }, [config])
