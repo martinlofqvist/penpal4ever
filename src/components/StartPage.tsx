@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Link from 'next/link'
+import { THEME_CATEGORIES } from '../lib/themeCategories'
 
 function CopyIcon() {
   return (
@@ -26,7 +27,8 @@ export default function StartPage() {
   const [phase,       setPhase]       = useState<Phase>('form')
   const [name,        setName]        = useState('')
   const [email,       setEmail]       = useState('')
-  const [maxThemes,   setMaxThemes]   = useState(6)
+  const [maxThemes,     setMaxThemes]     = useState(6)
+  const [themeCategory, setThemeCategory] = useState('all')
   const [error,       setError]       = useState('')
   const [shareUrl,    setShareUrl]    = useState('')
   const [slug,        setSlug]        = useState('')
@@ -50,10 +52,11 @@ export default function StartPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          yourFirstName: name.trim(),
-          yourEmail:     email.trim().toLowerCase(),
-          limitThemes:   !isInfinite,
-          maxThemes:     isInfinite ? null : String(maxThemes),
+          yourFirstName:  name.trim(),
+          yourEmail:      email.trim().toLowerCase(),
+          limitThemes:    !isInfinite,
+          maxThemes:      isInfinite ? null : String(maxThemes),
+          themeCategory,
         }),
       })
       const data = await res.json()
@@ -126,6 +129,29 @@ export default function StartPage() {
                     ? 'No limit — the correspondence goes on indefinitely'
                     : `Ends after ${maxThemes} theme${maxThemes === 1 ? '' : 's'}`}
                 </p>
+              </div>
+
+              <div className="start-categories">
+                <span className="start-label">THEME CATEGORY</span>
+                <div className="start-categories__grid">
+                  <button
+                    type="button"
+                    className={`start-category-pill${themeCategory === 'all' ? ' is-selected' : ''}`}
+                    onClick={() => setThemeCategory('all')}
+                  >
+                    Mix all
+                  </button>
+                  {THEME_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      className={`start-category-pill${themeCategory === cat.value ? ' is-selected' : ''}`}
+                      onClick={() => setThemeCategory(cat.value)}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {error && <p className="start-error">{error}</p>}
