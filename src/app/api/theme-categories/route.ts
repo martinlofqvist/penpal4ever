@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { THEME_CATEGORIES } from '../../../../lib/themeCategories'
+import { THEME_CATEGORIES } from '../../../lib/themeCategories'
 
 // GET /api/themes/categories
 // Returns all defined theme categories from the shared config.
