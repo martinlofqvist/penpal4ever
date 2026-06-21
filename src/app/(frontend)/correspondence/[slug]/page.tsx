@@ -11,7 +11,47 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  return { title: `Correspondence · ${slug} · PenPal4ever` }
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'correspondences',
+    where: { slug: { equals: slug } },
+    limit: 1,
+  })
+
+  if (!docs.length) return { title: 'PenPal4ever' }
+
+  const c = docs[0]
+  const you     = c.yourFirstName
+    ? c.yourFirstName.charAt(0).toUpperCase() + c.yourFirstName.slice(1).toLowerCase()
+    : null
+  const penpal  = c.penpalFirstName
+    ? c.penpalFirstName.charAt(0).toUpperCase() + c.penpalFirstName.slice(1).toLowerCase()
+    : null
+
+  const title       = you && penpal
+    ? `${you} & ${penpal} on PenPal4ever`
+    : you
+      ? `${you} invited you to PenPal4ever`
+      : 'PenPal4ever'
+
+  const description = you && penpal
+    ? `A creative penpal exchange between ${you} and ${penpal}, one theme at a time.`
+    : `You've been invited to a creative penpal exchange. One theme at a time.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      siteName: 'PenPal4ever',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+  }
 }
 
 export default async function CorrespondencePage({ params, searchParams }: Props) {
