@@ -42,7 +42,7 @@ declare global {
 
 export default function MagneticTrails ({ config, className }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const instanceRef  = useRef<ReturnType<Window['MagneticTrails']> | null>(null)
+  const instanceRef  = useRef<InstanceType<Window['MagneticTrails']> | null>(null)
   const configRef    = useRef(config)
   useEffect(() => { configRef.current = config }, [config])
 

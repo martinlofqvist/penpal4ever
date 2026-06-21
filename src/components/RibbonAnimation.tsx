@@ -42,7 +42,7 @@ declare global {
 
 export default function RibbonAnimation ({ config, className }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const instanceRef  = useRef<ReturnType<Window['RibbonAnimation']> | null>(null)
+  const instanceRef  = useRef<InstanceType<Window['RibbonAnimation']> | null>(null)
   const configRef    = useRef(config)
   useEffect(() => { configRef.current = config }, [config])
 
